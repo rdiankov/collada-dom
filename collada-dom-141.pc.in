@@ -1,0 +1,14 @@
+# Package Information for pkg-config
+
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@/bin
+libdir=@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@
+includedir=@CMAKE_INSTALL_PREFIX@/@COLLADA_DOM_INCLUDE_INSTALL_DIR@
+
+Name: collada14dom
+Description: COLLADA 1.4 Document Object Model (DOM)
+Version: @COLLADA_DOM_VERSION@
+URL:  http://sourceforge.net/projects/collada-dom
+Libs: -L${libdir} -lcollada-dom@COLLADA_DOM_LIBRARY_SUFFIX@
+Libs.private:
+Cflags: -I${includedir} -I${includedir}/1.4 @COLLADA_DOM_EXTERNAL_FLAGS@ -DCOLLADA_DOM_USING_141

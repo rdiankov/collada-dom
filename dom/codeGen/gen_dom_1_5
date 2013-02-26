@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ ! -f "$1" ]; then
+    echo "Error: invalid parameters"
+    echo "Usage: generate_dom_1_5 colladaSchema.xsd"
+    exit
+fi
+
+echo cleaning schema ...
+./cleanSchema "$1"
+newFile=`dirname "$1"`/`basename "$1" .xsd`_cleaned.xsd
+
+cd 1.5
+echo generating dom ...
+php gen.php ../$newFile
+echo copying sources ...
+mkdir -p ../../include/1.5/dom
+mkdir -p ../../src/1.5/dom
+cp gen/dom/include/* ../../include/1.5/dom
+cp gen/dom/src/* ../../src/1.5/dom
+cd ..

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+        Copyright 2008 Sony Computer Entertainment Inc.
+        Licensed under the Creative Commons Attribution Noncommercial Share Alike license.
+        See license file or www.creativecommons.org for details.
+-->
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>stthomas</author>
+      <authoring_tool>Feeling ColladaMax v3.02 with FCollada v3.02.</authoring_tool>
+      <comments>ColladaMax Export Options: ExportNormals=1;ExportEPolyAsTriangles=1;ExportXRefs=1;ExportSelected=0;ExportTangents=0;ExportAnimations=1;SampleAnim=0;ExportAnimClip=0;BakeMatrices=0;ExportRelativePaths=1;AnimStart=0;AnimEnd=100;</comments>
+    </contributor>
+    <created>2007-05-24T01:33:59Z</created>
+    <modified>2007-05-24T01:34:01Z</modified>
+    <unit meter="0.0254" name="inch"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="myEffect">
+      <profile_COMMON>
+				<newparam sid="myFloat1">
+					<float>0</float>
+				</newparam>
+				<newparam sid="myFloat.2">
+					<float>0</float>
+				</newparam>
+				<newparam sid=".myFloat.">
+					<float>0</float>
+				</newparam>
+        <technique sid="common">
+          <phong/>
+        </technique>
+				<extra>
+					<technique profile="">
+						<effectExtra id="effectExtra">
+							<!-- Each line has the sid to resolve, and the expected string result (see the
+									 resolveResultToString function for the meaning of the result string) -->
+							myFloat1   element
+							myFloat.2  element
+							.myFloat.  element
+						</effectExtra>
+					</technique>
+				</extra>
+      </profile_COMMON>
+    </effect>
+	</library_effects>
+	<library_nodes>
+		<node id="myNode">
+			<node sid="subNode1">
+				<node>
+					<node sid="subNode2">
+						<node>
+							<translate sid="trans">10 20 30</translate>
+							<rotate sid="rot">0 1 0 90</rotate>
+							<translate sid=".trans.late.">40 50 60</translate>
+							<matrix sid="mtx">
+								1 0 0 0
+								0 1 0 0
+								0 0 1 0
+								0 0 0 1
+							</matrix>
+						</node>
+					</node>
+				</node>
+			</node>
+		</node>
+		<node id="my.Node">
+			<node sid="subNode1">
+				<translate sid="trans">10 20 30</translate>
+			</node>
+		</node>
+		<node id="myNode2">
+			<node id="myNode3" sid="subNode1">
+				<node id="myNode4" sid="subNode2"/>
+			</node>
+			<node id="myNode5" sid="subNode2"/>
+		</node>
+		<node id="myNode6">
+			<extra>
+				<technique profile="profile1">
+					<customElem id="customElem1" sid="customElem"/>
+				</technique>
+				<technique profile="profile2">
+					<customElem id="customElem2" sid="customElem"/>
+				</technique>
+			</extra>
+		</node>
+	</library_nodes>
+	<extra>
+		<technique profile="">
+			<nodeSidRefExtra id="nodeSidRefExtra">
+				<!-- Each line has the sid to resolve, and the expected string result (see the
+				     resolveResultToString function for the meaning of the result string) -->
+				myNode                          element
+				myNode/subNode1                 element
+				myNode/subNode1/subNode2        element
+				myNode/subNode1/subNode2/trans  array
+				myNode/trans.X                  scalar
+				myNode/trans.Y                  scalar
+				myNode/trans(2)                 scalar
+				myNode/subNode1/rot(1)          scalar
+				myNode/rot.ANGLE                scalar
+				myNode/mtx(1)(2)                scalar
+				./rot                           array
+				myNode/.trans.late..X           scalar
+				myNode/trans(-1)                failed
+				myNode/trans.F                  failed
+				myNode/trans(20)                failed
+				myNode/mtx(1)(2)(3)             failed
+				test/trans                      failed
+				myNode/trans.X.Y                failed
+				myNode/trans.X(1)               failed
+				myNode/mtx(1)                   scalar
+				myNode/mtx(1).X                 failed
+				myNode/mtx(1)(5)                scalar
+				my.Node/trans.X                 scalar
+			</nodeSidRefExtra>
+			<nodeSidRefExtra2 id="nodeSidRefExtra2">
+				<!-- Each line has the sid to resolve and the ID of the element it's expected
+				     to resolve to -->
+				<!-- This first test is for breadth-first vs depth-first search -->
+				myNode2/subNode2 myNode5 
+				myNode2/subNode1/subNode2 myNode4
+				myNode2/blah failed
+			</nodeSidRefExtra2>
+			<nodeSidRefExtra3 id="nodeSidRefExtra3">
+				<!-- Each line has the sid to resolve, the profile to search in, and the
+				     ID of the element it's expected to resolve to -->
+				myNode6/customElem profile1 customElem1
+				myNode6/customElem profile2 customElem2
+				myNode6/customElem profile3 failed
+			</nodeSidRefExtra3>
+		</technique>
+	</extra>
+</COLLADA>

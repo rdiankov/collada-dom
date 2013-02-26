@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+        Copyright 2008 Sony Computer Entertainment Inc.
+        Licensed under the Creative Commons Attribution Noncommercial Share Alike license.
+        See license file or www.creativecommons.org for details.
+-->
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <library_geometries>
+    <geometry id=""Strut"-Geometry" name=""Strut"-Geometry">
+    </geometry>
+  </library_geometries>
+</COLLADA>

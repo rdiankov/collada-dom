@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+	<asset>
+		<contributor>
+			<author/>
+			<authoring_tool>RenderMonkey</authoring_tool>
+			<comments>Output from RenderMonkey COLLADA Exporter</comments>
+			<copyright/>
+			<source_data/>
+		</contributor>
+		<created>2009-01-12T15:16:49Z</created>
+		<modified>2009-01-12T15:16:49Z</modified>
+		<unit meter="0.01" name="centimeter"/>
+		<up_axis>Y_UP</up_axis>
+	</asset>
+	<library_effects>
+		<effect id="Ambient_Occlusion_OpenGL_E0_ME_FX">
+			<profile_COMMON>
+				<technique sid="phong">
+					<phong>
+						<emission>
+							<color>0 0 0 1</color>
+						</emission>
+						<ambient>
+							<color>0 0 0 1</color>
+						</ambient>
+						<diffuse>
+							<color>1 0.75 0.07 1</color>
+						</diffuse>
+						<specular>
+							<color>0.35 0.35 0.35 1</color>
+						</specular>
+						<shininess>
+							<float>10</float>
+						</shininess>
+						<reflective>
+							<color>0 0 0 1</color>
+						</reflective>
+						<reflectivity>
+							<float>0.5</float>
+						</reflectivity>
+						<transparent>
+							<color>0 0 0 1</color>
+						</transparent>
+						<transparency>
+							<float>1</float>
+						</transparency>
+						<index_of_refraction>
+							<float>1</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+			<profile_GLSL>
+				<code sid="Vertex_Program_E0_P0_VP">
+}</code>
+				<code sid="Fragment_Program_E0_P0_FP">uniform samplerCube Environment;
+
+}</code>
+				<newparam sid="time_0_2PI_E0_P0">
+					<semantic>Time0_2PI</semantic>
+					<float>0.146273</float>
+				</newparam>
+				<newparam sid="time_scale_E0_P0">
+					<float>4</float>
+				</newparam>
+				<newparam sid="Environment_Sampler">
+					<samplerCUBE>
+						<source>Environment_Surface</source>
+						<wrap_s>CLAMP</wrap_s>
+						<wrap_t>CLAMP</wrap_t>
+						<wrap_p>CLAMP</wrap_p>
+						<minfilter>LINEAR</minfilter>
+						<magfilter>LINEAR</magfilter>
+					</samplerCUBE>
+				</newparam>
+				<newparam sid="Environment_Surface">
+					<surface type="CUBE">
+						<init_cube>
+							<face ref="GraceCathedral_E0_cube_f0"/>
+							<face ref="GraceCathedral_E0_cube_f1"/>
+							<face ref="GraceCathedral_E0_cube_f2"/>
+							<face ref="GraceCathedral_E0_cube_f3"/>
+							<face ref="GraceCathedral_E0_cube_f4"/>
+							<face ref="GraceCathedral_E0_cube_f5"/>
+						</init_cube>
+						<format>A8R8G8B8</format>
+					</surface>
+				</newparam>
+				<technique sid="Ambient_Occlusion_OpenGL_E0_ME_TECH">
+					<pass sid="Background">
+						<draw>GEOMETRY</draw>
+						<shader stage="VERTEXPROGRAM">
+							<compiler_target>110</compiler_target>
+							<name source="Vertex_Program_E0_P0_VP">main</name>
+							<bind symbol="time_0_2PI">
+								<param ref="time_0_2PI_E0_P0"/>
+							</bind>
+							<bind symbol="time_scale">
+								<param ref="time_scale_E0_P0"/>
+							</bind>
+						</shader>
+						<shader stage="FRAGMENTPROGRAM">
+							<compiler_target>110</compiler_target>
+							<name source="Fragment_Program_E0_P0_FP">main</name>
+							<bind symbol="Environment">
+								<param ref="Environment_Sampler"/>
+							</bind>
+						</shader>
+						<depth_mask value="false"/>
+						<cull_face_enable/>
+					</pass>
+				</technique>
+			</profile_GLSL>
+			<extra>
+				<technique profile="RenderMonkey">
+					<RenderMonkey_TimeCycle>
+						<param type="float">120.000000</param>
+					</RenderMonkey_TimeCycle>
+				</technique>
+			</extra>
+		</effect>
+		<effect id="Ambient_Occlusion_OpenGL_E1_ME_FX">
+			<profile_COMMON>
+				<technique sid="phong">
+					<phong>
+						<emission>
+							<color>0 0 0 1</color>
+						</emission>
+						<ambient>
+							<color>0 0 0 1</color>
+						</ambient>
+						<diffuse>
+							<color>1 0.75 0.07 1</color>
+						</diffuse>
+						<specular>
+							<color>0.35 0.35 0.35 1</color>
+						</specular>
+						<shininess>
+							<float>10</float>
+						</shininess>
+						<reflective>
+							<color>0 0 0 1</color>
+						</reflective>
+						<reflectivity>
+							<float>0.5</float>
+						</reflectivity>
+						<transparent>
+							<color>0 0 0 1</color>
+						</transparent>
+						<transparency>
+							<float>1</float>
+						</transparency>
+						<index_of_refraction>
+							<float>1</float>
+						</index_of_refraction>
+					</phong>
+				</technique>
+			</profile_COMMON>
+			<profile_GLSL>
+				<code sid="Vertex_Program_E1_P1_VP">uniform float time_scale;
+}</code>
+				<code sid="Fragment_Program_E1_P1_FP">uniform samplerCube DiffuseEnvironment;
+}</code>
+				<newparam sid="time_0_2PI_E1_P1">
+					<semantic>Time0_2PI</semantic>
+					<float>0.146273</float>
+				</newparam>
+				<newparam sid="time_scale_E1_P1">
+					<float>4</float>
+				</newparam>
+				<newparam sid="AmbientOcclusion_Sampler">
+					<sampler2D>
+						<source>AmbientOcclusion_Surface</source>
+						<wrap_s>CLAMP</wrap_s>
+						<wrap_t>CLAMP</wrap_t>
+						<minfilter>LINEAR</minfilter>
+						<magfilter>LINEAR</magfilter>
+					</sampler2D>
+				</newparam>
+				<newparam sid="AmbientOcclusion_Surface">
+					<surface type="2D">
+						<init_from>AmbientOcclusion_E1</init_from>
+						<format>A8R8G8B8</format>
+					</surface>
+				</newparam>
+				<newparam sid="DiffuseEnvironment_Sampler">
+					<samplerCUBE>
+						<source>DiffuseEnvironment_Surface</source>
+						<wrap_s>CLAMP</wrap_s>
+						<wrap_t>CLAMP</wrap_t>
+						<wrap_p>CLAMP</wrap_p>
+						<minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+						<magfilter>LINEAR</magfilter>
+					</samplerCUBE>
+				</newparam>
+				<newparam sid="DiffuseEnvironment_Surface">
+					<surface type="CUBE">
+						<init_cube>
+							<face ref="GraceDiffuse_E1_cube_f0"/>
+							<face ref="GraceDiffuse_E1_cube_f1"/>
+							<face ref="GraceDiffuse_E1_cube_f2"/>
+							<face ref="GraceDiffuse_E1_cube_f3"/>
+							<face ref="GraceDiffuse_E1_cube_f4"/>
+							<face ref="GraceDiffuse_E1_cube_f5"/>
+						</init_cube>
+						<format>A8R8G8B8</format>
+					</surface>
+				</newparam>
+				<technique sid="Ambient_Occlusion_OpenGL_E1_ME_TECH">
+					<pass sid="Statue">
+						<draw>GEOMETRY</draw>
+						<shader stage="VERTEXPROGRAM">
+							<compiler_target>110</compiler_target>
+							<name source="Vertex_Program_E1_P1_VP">main</name>
+							<bind symbol="time_0_2PI">
+								<param ref="time_0_2PI_E1_P1"/>
+							</bind>
+							<bind symbol="time_scale">
+								<param ref="time_scale_E1_P1"/>
+							</bind>
+						</shader>
+						<shader stage="FRAGMENTPROGRAM">
+							<compiler_target>110</compiler_target>
+							<name source="Fragment_Program_E1_P1_FP">main</name>
+							<bind symbol="AmbientOcclusion">
+								<param ref="AmbientOcclusion_Sampler"/>
+							</bind>
+							<bind symbol="DiffuseEnvironment">
+								<param ref="DiffuseEnvironment_Sampler"/>
+							</bind>
+						</shader>
+						<cull_face_enable value="true"/>
+						<cull_face/>
+						<depth_mask/>
+					</pass>
+				</technique>
+			</profile_GLSL>
+			<extra>
+				<technique profile="RenderMonkey">
+					<RenderMonkey_TimeCycle>
+						<param type="float">120.000000</param>
+					</RenderMonkey_TimeCycle>
+				</technique>
+			</extra>
+		</effect>
+	</library_effects>
+	<library_images>
+		<image id="GraceCathedral_E0_cube_f0" name="GraceCathedral_E0_cube_f0">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_0.tga</init_from>
+		</image>
+		<image id="GraceCathedral_E0_cube_f1" name="GraceCathedral_E0_cube_f1">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_1.tga</init_from>
+		</image>
+		<image id="GraceCathedral_E0_cube_f2" name="GraceCathedral_E0_cube_f2">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_2.tga</init_from>
+		</image>
+		<image id="GraceCathedral_E0_cube_f3" name="GraceCathedral_E0_cube_f3">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_3.tga</init_from>
+		</image>
+		<image id="GraceCathedral_E0_cube_f4" name="GraceCathedral_E0_cube_f4">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_4.tga</init_from>
+		</image>
+		<image id="GraceCathedral_E0_cube_f5" name="GraceCathedral_E0_cube_f5">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_cube_cubemap_5.tga</init_from>
+		</image>
+		<image id="AmbientOcclusion_E1" name="AmbientOcclusion_E1">
+			<init_from>./Ambient_Occlusion_OpenGL/AmbientOcclusion_1024.dds</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f0" name="GraceDiffuse_E1_cube_f0">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_0.tga</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f1" name="GraceDiffuse_E1_cube_f1">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_1.tga</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f2" name="GraceDiffuse_E1_cube_f2">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_2.tga</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f3" name="GraceDiffuse_E1_cube_f3">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_3.tga</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f4" name="GraceDiffuse_E1_cube_f4">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_4.tga</init_from>
+		</image>
+		<image id="GraceDiffuse_E1_cube_f5" name="GraceDiffuse_E1_cube_f5">
+			<init_from>./Ambient_Occlusion_OpenGL/grace_diffuse_cube_cubemap_5.tga</init_from>
+		</image>
+	</library_images>
+</COLLADA>

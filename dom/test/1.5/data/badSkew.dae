@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+        Copyright 2008 Sony Computer Entertainment Inc.
+        Licensed under the Creative Commons Attribution Noncommercial Share Alike license.
+        See license file or www.creativecommons.org for details.
+-->
+<COLLADA xmlns="http://www.collada.org/2008/03/COLLADASchema" version="1.5.0">
+  <library_nodes>
+    <node id="my-node">
+      <!-- Skew is supposed to have 7 values -->
+      <skew sid="tooFew">45 1 0 0</skew>
+      <!-- Too few values -->
+      <skew sid="justRight">45 1 0 0 1 0 0</skew>
+      <!-- Correct number of values -->
+      <skew sid="tooMany">45 1 0 0 1 0 0 0 1 2 3</skew> <!-- Too many values -->
+		</node>
+	</library_nodes>
+</COLLADA>
+												

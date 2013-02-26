@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+        Copyright 2008 Sony Computer Entertainment Inc.
+        Licensed under the Creative Commons Attribution Noncommercial Share Alike license.
+        See license file or www.creativecommons.org for details.
+-->
+<COLLADA xmlns="http://www.collada.org/2008/03/COLLADASchema" version="1.5.0">
+	<asset>
+		<created>2006-08-23T22:34:52Z</created>
+		<modified>2006-08-23T22:34:52Z</modified>
+	</asset>
+	<library_nodes>
+		<node></node>
+		<extra>
+			<technique profile="whatever">
+				<float_array/>
+				<fx_sampler2D/>
+				<my_element/>
+				<!-- The <expected_types> element is a list of the types daeElement::getTypeName is
+						 expected to return for the previous elements. If the type names don't match
+					   the test will fail. -->
+				<expected_types>
+					float_array
+					fx_sampler2D
+					any
+				</expected_types>
+			</technique>
+		</extra>
+	</library_nodes>
+</COLLADA>

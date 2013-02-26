@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ ! -f "$1" ]; then
+    echo "Error: invalid schema"
+    echo "Usage: cleanSchema colladaSchema.xsd"
+    exit
+fi
+
+newFile=`dirname "$1"`/`basename "$1" .xsd`_cleaned.xsd
+cp "$1" "$newFile"
+
+# Remove type name annotations
+perl -piU -e 's/_type"/"/g' "$newFile"
+perl -piU -e 's/_group"/"/g' "$newFile"
+perl -piU -e 's/_enum"/"/g' "$newFile"
+perl -piU -e 's/_enum / /g' "$newFile"
+        
+# node_type and node_enum both map down to node, which causes a
+# conflict. Put back the _enum annotation on node_enum.
+perl -piU -e 's/xs:simpleType name="node">/xs:simpleType name="node_enum">/g' "$newFile"
+perl -piU -e 's/name="type" type="node"/name="type" type="node_enum"/g' "$newFile"
+        
+# The DOM doesn't handle the mathml spec. Replace it with an xs:any so people
+# can do whatever they want instead.
+perl -piU -e 's/<xs:element ref="math:math"/<xs:any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/g' "$newFile"
+
+rm "$newFile"U

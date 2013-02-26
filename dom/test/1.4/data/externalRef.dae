@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+        Copyright 2008 Sony Computer Entertainment Inc.
+        Licensed under the Creative Commons Attribution Noncommercial Share Alike license.
+        See license file or www.creativecommons.org for details.
+-->
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2008-04-16T18:46:43Z</created>
+    <modified>2006-04-16T18:46:43Z</modified>
+  </asset>
+  <library_nodes>
+    <node>
+      <instance_geometry url="cube.dae#box-lib"/>
+    </node>
+  </library_nodes>
+</COLLADA>
