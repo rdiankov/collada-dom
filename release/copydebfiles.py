@@ -17,7 +17,7 @@ if __name__=='__main__':
             return ['test']
         
         if src == os.path.join(srcdir,'dom','external-libs'):
-            return ['libxml2-new', 'minizip-1.1', 'pcre-8.02', 'tinyxml', 'zlib-1.2.5']
+            return ['libxml2-new', 'pcre-8.02', 'tinyxml', 'zlib-1.2.5']
         
         return []
     

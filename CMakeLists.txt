@@ -304,7 +304,7 @@ if(CMAKE_CPACK_COMMAND AND UNIX AND OPT_BUILD_PACKAGES)
   set(CPACK_COMPONENT_${COMPONENT_PREFIX_UPPER}-DEV_DISPLAY_NAME "C++ headers and build tools")
   set(CPACK_COMPONENT_${COMPONENT_PREFIX_UPPER}-DEV_DEPENDS ${COMPONENT_PREFIX}-base)
   
-  set(CPACK_DEBIAN_BUILD_DEPENDS debhelper cmake libxml2-dev libboost-dev zlib1g-dev libboost-filesystem-dev libboost-system-dev libpcre3-dev pkg-config)
+  set(CPACK_DEBIAN_BUILD_DEPENDS debhelper cmake libxml2-dev libboost-dev zlib1g-dev libboost-filesystem-dev libboost-system-dev libpcre3-dev pkg-config libtinyxml-dev)
 
   # debian
   set(CPACK_DEBIAN_PACKAGE_PRIORITY optional)
