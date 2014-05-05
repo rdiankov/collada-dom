@@ -1,6 +1,18 @@
 Collada DOM Change Log
 ----------------------
 
+2.4.3
+=====
+
+- fix DAE::open for collada 1.4.1
+
+- fix usage of COLLADA_DOM_DAEFLOAT_IS64 when serializing float values to string.
+
+2.4.2
+=====
+
+- fix libxml read filepath bug with %20
+
 2.4.1
 =====
 
