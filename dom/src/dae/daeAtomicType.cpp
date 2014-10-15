@@ -812,7 +812,7 @@ daeInt daeResolverType::compare(daeChar* value1, daeChar* value2) {
 }
 
 daeInt daeIDResolverType::compare(daeChar* value1, daeChar* value2) {
-    return (daeIDRef&)*value1 == (daeIDRef&)*value2;
+    return strcmp(((daeIDRef*)value1)->getID(), ((daeIDRef*)value2)->getID());
 }
 
 
