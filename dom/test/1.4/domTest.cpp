@@ -89,11 +89,11 @@ fs::path& tmpPath() {
 
 
 string lookupTestFile(const string& fileName) {
-    return (dataPath() / fileName).native_file_string();
+    return (dataPath() / fileName).string();
 }
 
 string getTmpFile(const string& fileName) {
-    return (tmpPath() / fileName).native_file_string();
+    return (tmpPath() / fileName).string();
 }
 
 
