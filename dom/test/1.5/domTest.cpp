@@ -125,15 +125,15 @@ DefineTest(utils) {
     CheckResult(replace("abc123", "bc12", "b") == "ab3");
     CheckResult(replace("abracadabra", "a", "") == "brcdbr");
 
-    CheckResult(tokenize("1|2|3|4", "|")   == makeStringList("1", "2", "3", "4", 0));
-    CheckResult(tokenize("|1|", "|")       == makeStringList("1", 0));
-    CheckResult(tokenize("1|||2||3|", "|") == makeStringList("1", "2", "3", 0));
+    CheckResult(tokenize("1|2|3|4", "|")   == makeStringList("1", "2", "3", "4", NULL));
+    CheckResult(tokenize("|1|", "|")       == makeStringList("1", NULL));
+    CheckResult(tokenize("1|||2||3|", "|") == makeStringList("1", "2", "3", NULL));
     CheckResult(tokenize("1|||2||3|", "|", true) ==
-                makeStringList("1", "|", "|", "|", "2", "|", "|", "3", "|", 0));
+                makeStringList("1", "|", "|", "|", "2", "|", "|", "3", "|", NULL));
     CheckResult(tokenize("this/is some#text", "/#", true) ==
-                makeStringList("this", "/", "is some", "#", "text", 0));
+                makeStringList("this", "/", "is some", "#", "text", NULL));
     CheckResult(tokenize("this/is some#text", "/# ", false) ==
-                makeStringList("this", "is", "some", "text", 0));
+                makeStringList("this", "is", "some", "text", NULL));
 
     CheckResult(toString(5) == "5");
     CheckResult(toFloat(toString(4.0f)) == 4.0f);
