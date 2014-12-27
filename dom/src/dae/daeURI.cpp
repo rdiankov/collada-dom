@@ -13,7 +13,28 @@
 #include <dae/daeDocument.h>
 #include <dae/daeErrorHandler.h>
 #include <dae/daeUtils.h>
+
+#ifdef USE_URIPARSER
+#include <uriparser/Uri.h>
+std::string fromRange(const UriTextRangeA & rng)
+{
+    return std::string(rng.first, rng.afterLast);
+}
+std::string fromList(UriPathSegmentA * xs, const std::string & delim)
+{
+    UriPathSegmentStructA * head(xs);
+    std::string accum;
+    while (head)
+        {
+            accum += delim + fromRange(head->text);
+            head = head->next;
+        }
+
+    return accum;
+}
+#else
 #include <pcrecpp.h>
+#endif
 
 using namespace std;
 using namespace cdom;
@@ -141,12 +162,26 @@ void parsePath(const string& path,
     //dir = baseName = extension = "";
     //re.FullMatch(path, &dir, &baseName, &extension);
 
+#ifdef USE_URIPARSER
+    if ( path.size() <= 1) {
+        dir = path;
+        baseName = "";
+    } else {
+        dir= path.substr(0, path.rfind('/')+1);
+        baseName = path.substr(path.rfind('/')+1);
+    }
+    if ( baseName.rfind('.') != std::string::npos ) {
+       extension = baseName.substr(baseName.find('.'));
+       baseName = baseName.substr(0, baseName.find('.'));
+    }
+#else
     static pcrecpp::RE findDir("(.*/)?(.*)?");
     static pcrecpp::RE findExt("([^.]*)?(\\..*)?");
     string tmpFile;
     dir = baseName = extension = tmpFile = "";
     findDir.PartialMatch(path, &dir, &tmpFile);
     findExt.PartialMatch(tmpFile, &baseName, &extension);
+#endif
 }
 }
 
@@ -746,12 +781,30 @@ bool cdom::parseUriRef(const string& uriRef,
                        string& path,
                        string& query,
                        string& fragment) {
+
+#ifdef USE_URIPARSER
+    UriParserStateA state;
+    UriUriA uri;
+    state.uri = &uri;
+    if ( uriParseUriA(&state, uriRef.c_str()) == 0 ) {
+        scheme = fromRange(uri.scheme);
+        authority = fromRange(uri.hostText);
+        path = fromList(uri.pathHead, "/");
+        if (uri.absolutePath != URI_TRUE and uri.hostText.first == NULL)
+            path = path.erase(0, 1);
+        query = fromRange(uri.query);
+        fragment = fromRange(uri.fragment);
+        uriFreeUriMembersA(&uri);
+        return true;
+    }
+#else
     // This regular expression for parsing URI references comes from the URI spec:
     //   http://tools.ietf.org/html/rfc3986#appendix-B
     static pcrecpp::RE re("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
     string s1, s3, s6, s8;
     if (re.FullMatch(uriRef, &s1, &scheme, &s3, &authority, &path, &s6, &query, &s8, &fragment))
         return true;
+#endif
 
     return false;
 }
