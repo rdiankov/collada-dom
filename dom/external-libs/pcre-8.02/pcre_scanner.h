@@ -51,7 +51,7 @@
 #include <pcrecpp.h>
 #include <pcre_stringpiece.h>
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 class PCRECPP_EXP_DEFN Scanner {
  public:

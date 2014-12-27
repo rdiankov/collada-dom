@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains pcre_exec(), the externally visible function that does
+/* This module contains pcrelocal_exec(), the externally visible function that does
 pattern matching using an NFA algorithm, trying to mimic Perl as closely as
 possible. There are also some static supporting functions. */
 
@@ -283,7 +283,7 @@ argument of match(), which never changes. */
 
 #define RMATCH(ra,rb,rc,rd,re,rf,rg,rw)\
   {\
-  heapframe *newframe = (pcre_stack_malloc)(sizeof(heapframe));\
+  heapframe *newframe = (pcrelocal_stack_malloc)(sizeof(heapframe));\
   frame->Xwhere = rw; \
   newframe->Xeptr = ra;\
   newframe->Xecode = rb;\
@@ -306,7 +306,7 @@ argument of match(), which never changes. */
   {\
   heapframe *newframe = frame;\
   frame = newframe->Xprevframe;\
-  (pcre_stack_free)(newframe);\
+  (pcrelocal_stack_free)(newframe);\
   if (frame != NULL)\
     {\
     rrc = ra;\
@@ -475,7 +475,7 @@ heap storage. Set up the top-level frame here; others are obtained from the
 heap whenever RMATCH() does a "recursion". See the macro definitions above. */
 
 #ifdef NO_RECURSE
-heapframe *frame = (pcre_stack_malloc)(sizeof(heapframe));
+heapframe *frame = (pcrelocal_stack_malloc)(sizeof(heapframe));
 frame->Xprevframe = NULL;            /* Marks the top level */
 
 /* Copy in the original argument variables */
@@ -819,9 +819,9 @@ for (;;)
 
     if (ecode[LINK_SIZE+1] == OP_CALLOUT)
       {
-      if (pcre_callout != NULL)
+      if (pcrelocal_callout != NULL)
         {
-        pcre_callout_block cb;
+        pcrelocal_callout_block cb;
         cb.version          = 1;   /* Version 1 of the callout block */
         cb.callout_number   = ecode[LINK_SIZE+2];
         cb.offset_vector    = md->offset_vector;
@@ -834,7 +834,7 @@ for (;;)
         cb.capture_top      = offset_top/2;
         cb.capture_last     = md->capture_last;
         cb.callout_data     = md->callout_data;
-        if ((rrc = (*pcre_callout)(&cb)) > 0) RRETURN(MATCH_NOMATCH);
+        if ((rrc = (*pcrelocal_callout)(&cb)) > 0) RRETURN(MATCH_NOMATCH);
         if (rrc < 0) RRETURN(rrc);
         }
       ecode += _pcre_OP_lengths[OP_CALLOUT];
@@ -1205,9 +1205,9 @@ for (;;)
     function is able to force a failure. */
 
     case OP_CALLOUT:
-    if (pcre_callout != NULL)
+    if (pcrelocal_callout != NULL)
       {
-      pcre_callout_block cb;
+      pcrelocal_callout_block cb;
       cb.version          = 1;   /* Version 1 of the callout block */
       cb.callout_number   = ecode[1];
       cb.offset_vector    = md->offset_vector;
@@ -1220,7 +1220,7 @@ for (;;)
       cb.capture_top      = offset_top/2;
       cb.capture_last     = md->capture_last;
       cb.callout_data     = md->callout_data;
-      if ((rrc = (*pcre_callout)(&cb)) > 0) RRETURN(MATCH_NOMATCH);
+      if ((rrc = (*pcrelocal_callout)(&cb)) > 0) RRETURN(MATCH_NOMATCH);
       if (rrc < 0) RRETURN(rrc);
       }
     ecode += 2 + 2*LINK_SIZE;
@@ -1269,7 +1269,7 @@ for (;;)
       else
         {
         new_recursive.offset_save =
-          (int *)(pcre_malloc)(new_recursive.saved_max * sizeof(int));
+          (int *)(pcrelocal_malloc)(new_recursive.saved_max * sizeof(int));
         if (new_recursive.offset_save == NULL) RRETURN(PCRE_ERROR_NOMEMORY);
         }
 
@@ -1291,14 +1291,14 @@ for (;;)
           DPRINTF(("Recursion matched\n"));
           md->recursive = new_recursive.prevrec;
           if (new_recursive.offset_save != stacksave)
-            (pcre_free)(new_recursive.offset_save);
+            (pcrelocal_free)(new_recursive.offset_save);
           RRETURN(MATCH_MATCH);
           }
         else if (rrc != MATCH_NOMATCH && rrc != MATCH_THEN)
           {
           DPRINTF(("Recursion gave error %d\n", rrc));
           if (new_recursive.offset_save != stacksave)
-            (pcre_free)(new_recursive.offset_save);
+            (pcrelocal_free)(new_recursive.offset_save);
           RRETURN(rrc);
           }
 
@@ -1312,7 +1312,7 @@ for (;;)
       DPRINTF(("Recursion didn't match\n"));
       md->recursive = new_recursive.prevrec;
       if (new_recursive.offset_save != stacksave)
-        (pcre_free)(new_recursive.offset_save);
+        (pcrelocal_free)(new_recursive.offset_save);
       RRETURN(MATCH_NOMATCH);
       }
     /* Control never reaches here */
@@ -5171,7 +5171,7 @@ Returns:          > 0 => success; value is the number of elements filled in
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_exec(const pcre *argument_re, const pcre_extra *extra_data,
+pcrelocal_exec(const pcre *argument_re, const pcrelocal_extra *extra_data,
   PCRE_SPTR subject, int length, int start_offset, int options, int *offsets,
   int offsetcount)
 {
@@ -5197,8 +5197,8 @@ USPTR end_subject;
 USPTR start_partial = NULL;
 USPTR req_byte_ptr = start_match - 1;
 
-pcre_study_data internal_study;
-const pcre_study_data *study;
+pcrelocal_study_data internal_study;
+const pcrelocal_study_data *study;
 
 real_pcre internal_re;
 const real_pcre *external_re = (const real_pcre *)argument_re;
@@ -5234,7 +5234,7 @@ if (extra_data != NULL)
   {
   register unsigned int flags = extra_data->flags;
   if ((flags & PCRE_EXTRA_STUDY_DATA) != 0)
-    study = (const pcre_study_data *)extra_data->study_data;
+    study = (const pcrelocal_study_data *)extra_data->study_data;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT) != 0)
     md->match_limit = extra_data->match_limit;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT_RECURSION) != 0)
@@ -5325,7 +5325,7 @@ switch (options & (PCRE_BSR_ANYCRLF|PCRE_BSR_UNICODE))
 nothing is set at run time, whatever was used at compile time applies. */
 
 switch ((((options & PCRE_NEWLINE_BITS) == 0)? re->options :
-        (pcre_uint32)options) & PCRE_NEWLINE_BITS)
+        (pcrelocal_uint32)options) & PCRE_NEWLINE_BITS)
   {
   case 0: newline = NEWLINE; break;   /* Compile-time default */
   case PCRE_NEWLINE_CR: newline = CHAR_CR; break;
@@ -5404,7 +5404,7 @@ ocount = offsetcount - (offsetcount % 3);
 if (re->top_backref > 0 && re->top_backref >= ocount/3)
   {
   ocount = re->top_backref * 3 + 3;
-  md->offset_vector = (int *)(pcre_malloc)(ocount * sizeof(int));
+  md->offset_vector = (int *)(pcrelocal_malloc)(ocount * sizeof(int));
   if (md->offset_vector == NULL) return PCRE_ERROR_NOMEMORY;
   using_temporary_offsets = TRUE;
   DPRINTF(("Got memory to hold back references\n"));
@@ -5588,7 +5588,7 @@ for(;;)
     bytes to avoid spending too much time in this optimization. */
 
     if (study != NULL && (study->flags & PCRE_STUDY_MINLEN) != 0 &&
-        (pcre_uint32)(end_subject - start_match) < study->minlength)
+        (pcrelocal_uint32)(end_subject - start_match) < study->minlength)
       {
       rc = MATCH_NOMATCH;
       break;
@@ -5770,7 +5770,7 @@ if (rc == MATCH_MATCH)
       }
     if (md->end_offset_top > offsetcount) md->offset_overflow = TRUE;
     DPRINTF(("Freeing temporary memory\n"));
-    (pcre_free)(md->offset_vector);
+    (pcrelocal_free)(md->offset_vector);
     }
 
   /* Set the return code to the number of captured strings, or 0 if there are
@@ -5798,7 +5798,7 @@ attempt has failed at all permitted starting positions. */
 if (using_temporary_offsets)
   {
   DPRINTF(("Freeing temporary memory\n"));
-  (pcre_free)(md->offset_vector);
+  (pcrelocal_free)(md->offset_vector);
   }
 
 if (rc != MATCH_NOMATCH && rc != PCRE_ERROR_PARTIAL)
@@ -5823,4 +5823,4 @@ else
   }
 }
 
-/* End of pcre_exec.c */
+/* End of pcrelocal_exec.c */

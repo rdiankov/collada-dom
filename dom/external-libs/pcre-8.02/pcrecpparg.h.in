@@ -37,7 +37,7 @@
 
 #include <pcre.h>
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 class StringPiece;
 

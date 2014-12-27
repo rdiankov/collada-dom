@@ -136,7 +136,7 @@ static const unsigned char *pcretables = NULL;
 
 static int  pattern_count = 0;
 static pcre **pattern_list = NULL;
-static pcre_extra **hints_list = NULL;
+static pcrelocal_extra **hints_list = NULL;
 
 static char *include_pattern = NULL;
 static char *exclude_pattern = NULL;
@@ -834,7 +834,7 @@ Arguments:
   matchptr    the start of the subject
   length      the length of the subject to match
   offsets     the offets vector to fill in
-  mrc         address of where to put the result of pcre_exec()
+  mrc         address of where to put the result of pcrelocal_exec()
 
 Returns:      TRUE if there was a match
               FALSE if there was no match
@@ -847,11 +847,11 @@ match_patterns(char *matchptr, size_t length, int *offsets, int *mrc)
 int i;
 for (i = 0; i < pattern_count; i++)
   {
-  *mrc = pcre_exec(pattern_list[i], hints_list[i], matchptr, length, 0,
+  *mrc = pcrelocal_exec(pattern_list[i], hints_list[i], matchptr, length, 0,
     PCRE_NOTEMPTY, offsets, OFFSET_SIZE);
   if (*mrc >= 0) return TRUE;
   if (*mrc == PCRE_ERROR_NOMATCH) continue;
-  fprintf(stderr, "pcregrep: pcre_exec() error %d while matching ", *mrc);
+  fprintf(stderr, "pcregrep: pcrelocal_exec() error %d while matching ", *mrc);
   if (pattern_count > 1) fprintf(stderr, "pattern number %d to ", i+1);
   fprintf(stderr, "this text:\n");
   fwrite(matchptr, 1, length, stderr);  /* In case binary zero included */
@@ -973,7 +973,7 @@ while (ptr < endptr)
   size_t length, linelength;
 
   /* At this point, ptr is at the start of a line. We need to find the length
-  of the subject string to pass to pcre_exec(). In multiline mode, it is the
+  of the subject string to pass to pcrelocal_exec(). In multiline mode, it is the
   length remainder of the data in the buffer. Otherwise, it is the length of
   the next line, excluding the terminating newline. After matching, we always
   advance by the length of the next line. In multiline mode the PCRE_FIRSTLINE
@@ -1019,7 +1019,7 @@ while (ptr < endptr)
 
 
       for (i = 0; i < jfriedl_XR; i++)
-          match = (pcre_exec(pattern_list[0], hints_list[0], ptr, length, 0,
+          match = (pcrelocal_exec(pattern_list[0], hints_list[0], ptr, length, 0,
               PCRE_NOTEMPTY, offsets, OFFSET_SIZE) >= 0);
 
       if (gettimeofday(&end_time, &dummy) != 0)
@@ -1456,21 +1456,21 @@ if ((sep = isdirectory(pathname)) != 0)
       if (isdirectory(buffer))
         {
         if (exclude_dir_compiled != NULL &&
-            pcre_exec(exclude_dir_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) >= 0)
+            pcrelocal_exec(exclude_dir_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) >= 0)
           continue;
 
         if (include_dir_compiled != NULL &&
-            pcre_exec(include_dir_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) < 0)
+            pcrelocal_exec(include_dir_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) < 0)
           continue;
         }
       else
         {
         if (exclude_compiled != NULL &&
-            pcre_exec(exclude_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) >= 0)
+            pcrelocal_exec(exclude_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) >= 0)
           continue;
 
         if (include_compiled != NULL &&
-            pcre_exec(include_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) < 0)
+            pcrelocal_exec(include_compiled, NULL, nextfile, nflen, 0, 0, NULL, 0) < 0)
           continue;
         }
 
@@ -1705,7 +1705,7 @@ switch(letter)
   case 'x': process_options |= PO_LINE_MATCH; break;
 
   case 'V':
-  fprintf(stderr, "pcregrep version %s\n", pcre_version());
+  fprintf(stderr, "pcregrep version %s\n", pcrelocal_version());
   exit(0);
   break;
 
@@ -1780,7 +1780,7 @@ if (pattern_count >= MAX_PATTERN_COUNT)
 sprintf(buffer, "%s%.*s%s", prefix[process_options], MBUFTHIRD, pattern,
   suffix[process_options]);
 pattern_list[pattern_count] =
-  pcre_compile(buffer, options, &error, &errptr, pcretables);
+  pcrelocal_compile(buffer, options, &error, &errptr, pcretables);
 if (pattern_list[pattern_count] != NULL)
   {
   pattern_count++;
@@ -1865,7 +1865,7 @@ main(int argc, char **argv)
 {
 int i, j;
 int rc = 1;
-int pcre_options = 0;
+int pcrelocal_options = 0;
 int cmd_pattern_count = 0;
 int hint_count = 0;
 int errptr;
@@ -1876,7 +1876,7 @@ const char *error;
 
 /* Set the default line ending value from the default in the PCRE library;
 "lf", "cr", "crlf", and "any" are supported. Anything else is treated as "lf".
-Note that the return values from pcre_config(), though derived from the ASCII
+Note that the return values from pcrelocal_config(), though derived from the ASCII
 codes, are the same in EBCDIC environments, so we must use the actual values
 rather than escapes such as as '\r'. */
 
@@ -2046,7 +2046,7 @@ for (i = 1; i < argc; i++)
         option_data = s+1;
         break;
         }
-      pcre_options = handle_option(*s++, pcre_options);
+      pcrelocal_options = handle_option(*s++, pcrelocal_options);
       }
     }
 
@@ -2056,7 +2056,7 @@ for (i = 1; i < argc; i++)
 
   if (op->type == OP_NODATA)
     {
-    pcre_options = handle_option(op->one_char, pcre_options);
+    pcrelocal_options = handle_option(op->one_char, pcrelocal_options);
     continue;
     }
 
@@ -2185,7 +2185,7 @@ if (locale != NULL)
       locale, locale_from);
     return 2;
     }
-  pcretables = pcre_maketables();
+  pcretables = pcrelocal_maketables();
   }
 
 /* Sort out colouring */
@@ -2212,27 +2212,27 @@ if (colour_option != NULL && strcmp(colour_option, "never") != 0)
 
 if (strcmp(newline, "cr") == 0 || strcmp(newline, "CR") == 0)
   {
-  pcre_options |= PCRE_NEWLINE_CR;
+  pcrelocal_options |= PCRE_NEWLINE_CR;
   endlinetype = EL_CR;
   }
 else if (strcmp(newline, "lf") == 0 || strcmp(newline, "LF") == 0)
   {
-  pcre_options |= PCRE_NEWLINE_LF;
+  pcrelocal_options |= PCRE_NEWLINE_LF;
   endlinetype = EL_LF;
   }
 else if (strcmp(newline, "crlf") == 0 || strcmp(newline, "CRLF") == 0)
   {
-  pcre_options |= PCRE_NEWLINE_CRLF;
+  pcrelocal_options |= PCRE_NEWLINE_CRLF;
   endlinetype = EL_CRLF;
   }
 else if (strcmp(newline, "any") == 0 || strcmp(newline, "ANY") == 0)
   {
-  pcre_options |= PCRE_NEWLINE_ANY;
+  pcrelocal_options |= PCRE_NEWLINE_ANY;
   endlinetype = EL_ANY;
   }
 else if (strcmp(newline, "anycrlf") == 0 || strcmp(newline, "ANYCRLF") == 0)
   {
-  pcre_options |= PCRE_NEWLINE_ANYCRLF;
+  pcrelocal_options |= PCRE_NEWLINE_ANYCRLF;
   endlinetype = EL_ANYCRLF;
   }
 else
@@ -2284,7 +2284,7 @@ if (jfriedl_XT != 0 || jfriedl_XR != 0)
 /* Get memory to store the pattern and hints lists. */
 
 pattern_list = (pcre **)malloc(MAX_PATTERN_COUNT * sizeof(pcre *));
-hints_list = (pcre_extra **)malloc(MAX_PATTERN_COUNT * sizeof(pcre_extra *));
+hints_list = (pcrelocal_extra **)malloc(MAX_PATTERN_COUNT * sizeof(pcrelocal_extra *));
 
 if (pattern_list == NULL || hints_list == NULL)
   {
@@ -2306,7 +2306,7 @@ multiple uses of -e or as a single unkeyed pattern. */
 
 for (j = 0; j < cmd_pattern_count; j++)
   {
-  if (!compile_pattern(patterns[j], pcre_options, NULL,
+  if (!compile_pattern(patterns[j], pcrelocal_options, NULL,
        (j == 0 && cmd_pattern_count == 1)? 0 : j + 1))
     goto EXIT2;
   }
@@ -2344,7 +2344,7 @@ if (pattern_filename != NULL)
     *s = 0;
     linenumber++;
     if (buffer[0] == 0) continue;   /* Skip blank lines */
-    if (!compile_pattern(buffer, pcre_options, filename, linenumber))
+    if (!compile_pattern(buffer, pcrelocal_options, filename, linenumber))
       goto EXIT2;
     }
 
@@ -2355,7 +2355,7 @@ if (pattern_filename != NULL)
 
 for (j = 0; j < pattern_count; j++)
   {
-  hints_list[j] = pcre_study(pattern_list[j], 0, &error);
+  hints_list[j] = pcrelocal_study(pattern_list[j], 0, &error);
   if (error != NULL)
     {
     char s[16];
@@ -2370,7 +2370,7 @@ for (j = 0; j < pattern_count; j++)
 
 if (exclude_pattern != NULL)
   {
-  exclude_compiled = pcre_compile(exclude_pattern, 0, &error, &errptr,
+  exclude_compiled = pcrelocal_compile(exclude_pattern, 0, &error, &errptr,
     pcretables);
   if (exclude_compiled == NULL)
     {
@@ -2382,7 +2382,7 @@ if (exclude_pattern != NULL)
 
 if (include_pattern != NULL)
   {
-  include_compiled = pcre_compile(include_pattern, 0, &error, &errptr,
+  include_compiled = pcrelocal_compile(include_pattern, 0, &error, &errptr,
     pcretables);
   if (include_compiled == NULL)
     {
@@ -2394,7 +2394,7 @@ if (include_pattern != NULL)
 
 if (exclude_dir_pattern != NULL)
   {
-  exclude_dir_compiled = pcre_compile(exclude_dir_pattern, 0, &error, &errptr,
+  exclude_dir_compiled = pcrelocal_compile(exclude_dir_pattern, 0, &error, &errptr,
     pcretables);
   if (exclude_dir_compiled == NULL)
     {
@@ -2406,7 +2406,7 @@ if (exclude_dir_pattern != NULL)
 
 if (include_dir_pattern != NULL)
   {
-  include_dir_compiled = pcre_compile(include_dir_pattern, 0, &error, &errptr,
+  include_dir_compiled = pcrelocal_compile(include_dir_pattern, 0, &error, &errptr,
     pcretables);
   if (include_dir_compiled == NULL)
     {

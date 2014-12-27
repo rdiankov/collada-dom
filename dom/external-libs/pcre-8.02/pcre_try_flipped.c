@@ -82,8 +82,8 @@ return ((value & 0x000000ff) << 24) |
 *       Test for a byte-flipped compiled regex   *
 *************************************************/
 
-/* This function is called from pcre_exec(), pcre_dfa_exec(), and also from
-pcre_fullinfo(). Its job is to test whether the regex is byte-flipped - that
+/* This function is called from pcrelocal_exec(), pcrelocal_dfa_exec(), and also from
+pcrelocal_fullinfo(). Its job is to test whether the regex is byte-flipped - that
 is, it was compiled on a system of opposite endianness. The function is called
 only when the native MAGIC_NUMBER test fails. If the regex is indeed flipped,
 we flip all the relevant values into a different data block, and return it.
@@ -100,7 +100,7 @@ Returns:           the new block if is is indeed a byte-flipped regex
 
 real_pcre *
 _pcre_try_flipped(const real_pcre *re, real_pcre *internal_re,
-  const pcre_study_data *study, pcre_study_data *internal_study)
+  const pcrelocal_study_data *study, pcrelocal_study_data *internal_study)
 {
 if (byteflip(re->magic_number, sizeof(re->magic_number)) != MAGIC_NUMBER)
   return NULL;
@@ -108,21 +108,21 @@ if (byteflip(re->magic_number, sizeof(re->magic_number)) != MAGIC_NUMBER)
 *internal_re = *re;           /* To copy other fields */
 internal_re->size = byteflip(re->size, sizeof(re->size));
 internal_re->options = byteflip(re->options, sizeof(re->options));
-internal_re->flags = (pcre_uint16)byteflip(re->flags, sizeof(re->flags));
+internal_re->flags = (pcrelocal_uint16)byteflip(re->flags, sizeof(re->flags));
 internal_re->top_bracket =
-  (pcre_uint16)byteflip(re->top_bracket, sizeof(re->top_bracket));
+  (pcrelocal_uint16)byteflip(re->top_bracket, sizeof(re->top_bracket));
 internal_re->top_backref =
-  (pcre_uint16)byteflip(re->top_backref, sizeof(re->top_backref));
+  (pcrelocal_uint16)byteflip(re->top_backref, sizeof(re->top_backref));
 internal_re->first_byte =
-  (pcre_uint16)byteflip(re->first_byte, sizeof(re->first_byte));
+  (pcrelocal_uint16)byteflip(re->first_byte, sizeof(re->first_byte));
 internal_re->req_byte =
-  (pcre_uint16)byteflip(re->req_byte, sizeof(re->req_byte));
+  (pcrelocal_uint16)byteflip(re->req_byte, sizeof(re->req_byte));
 internal_re->name_table_offset =
-  (pcre_uint16)byteflip(re->name_table_offset, sizeof(re->name_table_offset));
+  (pcrelocal_uint16)byteflip(re->name_table_offset, sizeof(re->name_table_offset));
 internal_re->name_entry_size =
-  (pcre_uint16)byteflip(re->name_entry_size, sizeof(re->name_entry_size));
+  (pcrelocal_uint16)byteflip(re->name_entry_size, sizeof(re->name_entry_size));
 internal_re->name_count =
-  (pcre_uint16)byteflip(re->name_count, sizeof(re->name_count));
+  (pcrelocal_uint16)byteflip(re->name_count, sizeof(re->name_count));
 
 if (study != NULL)
   {
@@ -136,4 +136,4 @@ if (study != NULL)
 return internal_re;
 }
 
-/* End of pcre_tryflipped.c */
+/* End of pcrelocal_tryflipped.c */

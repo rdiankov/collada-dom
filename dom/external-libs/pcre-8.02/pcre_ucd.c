@@ -20,15 +20,15 @@
 #ifndef SUPPORT_UCP
 const ucd_record _pcre_ucd_records[] = {{0,0,0 }};
 const uschar _pcre_ucd_stage1[] = {0};
-const pcre_uint16 _pcre_ucd_stage2[] = {0};
+const pcrelocal_uint16 _pcre_ucd_stage2[] = {0};
 #else
 
 /* When recompiling tables with a new Unicode version,
-please check types in the structure definition from pcre_internal.h:
+please check types in the structure definition from pcrelocal_internal.h:
 typedef struct {
 uschar property_0;
 uschar property_1;
-pcre_int32 property_2;
+pcrelocal_int32 property_2;
 } ucd_record; */
 
 
@@ -1100,7 +1100,7 @@ const uschar _pcre_ucd_stage1[] = { /* 8704 bytes */
 114,114,114,114,114,114,114,114,114,114,114,114,114,114,114,171, /* U+10F800 */
 };
 
-const pcre_uint16 _pcre_ucd_stage2[] = { /* 44032 bytes, block = 128 */
+const pcrelocal_uint16 _pcre_ucd_stage2[] = { /* 44032 bytes, block = 128 */
 /* block 0 */
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -2824,6 +2824,6 @@ const pcre_uint16 _pcre_ucd_stage2[] = { /* 44032 bytes, block = 128 */
 };
 
 #if UCD_BLOCK_SIZE != 128
-#error Please correct UCD_BLOCK_SIZE in pcre_internal.h
+#error Please correct UCD_BLOCK_SIZE in pcrelocal_internal.h
 #endif
 #endif  /* SUPPORT_UCP */

@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 /* This module contains an internal function that is used to match an extended
-class. It is used by both pcre_exec() and pcre_def_exec(). */
+class. It is used by both pcrelocal_exec() and pcrelocal_def_exec(). */
 
 
 #ifdef HAVE_CONFIG_H
@@ -143,4 +143,4 @@ while ((t = *data++) != XCL_END)
 return negated;   /* char did not match */
 }
 
-/* End of pcre_xclass.c */
+/* End of pcrelocal_xclass.c */

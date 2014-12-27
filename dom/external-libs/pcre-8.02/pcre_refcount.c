@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_refcount(), which is an
+/* This module contains the external function pcrelocal_refcount(), which is an
 auxiliary function that can be used to maintain a reference count in a compiled
 pattern data block. This might be helpful in applications where the block is
 shared by different users. */
@@ -69,7 +69,7 @@ Returns:        the (possibly updated) count value (a non-negative number), or
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_refcount(pcre *argument_re, int adjust)
+pcrelocal_refcount(pcre *argument_re, int adjust)
 {
 real_pcre *re = (real_pcre *)argument_re;
 if (re == NULL) return PCRE_ERROR_NULL;
@@ -79,4 +79,4 @@ re->ref_count = (-adjust > re->ref_count)? 0 :
 return re->ref_count;
 }
 
-/* End of pcre_refcount.c */
+/* End of pcrelocal_refcount.c */

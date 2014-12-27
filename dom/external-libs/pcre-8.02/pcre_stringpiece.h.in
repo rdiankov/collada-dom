@@ -54,7 +54,7 @@
 
 using std::string;
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 class PCRECPP_EXP_DEFN StringPiece {
  private:
@@ -162,7 +162,7 @@ class PCRECPP_EXP_DEFN StringPiece {
 
 #ifdef HAVE_TYPE_TRAITS
 // This makes vector<StringPiece> really fast for some STL implementations
-template<> struct __type_traits<pcrecpp::StringPiece> {
+template<> struct __type_traits<pcrecpp_local::StringPiece> {
   typedef __true_type    has_trivial_default_constructor;
   typedef __true_type    has_trivial_copy_constructor;
   typedef __true_type    has_trivial_assignment_operator;
@@ -172,6 +172,6 @@ template<> struct __type_traits<pcrecpp::StringPiece> {
 #endif
 
 // allow StringPiece to be logged
-std::ostream& operator<<(std::ostream& o, const pcrecpp::StringPiece& piece);
+std::ostream& operator<<(std::ostream& o, const pcrecpp_local::StringPiece& piece);
 
 #endif /* _PCRE_STRINGPIECE_H */

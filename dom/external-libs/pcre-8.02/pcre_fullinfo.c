@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_fullinfo(), which returns
+/* This module contains the external function pcrelocal_fullinfo(), which returns
 information about a compiled pattern. */
 
 
@@ -66,18 +66,18 @@ Returns:           0 if data returned, negative on error
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_fullinfo(const pcre *argument_re, const pcre_extra *extra_data, int what,
+pcrelocal_fullinfo(const pcre *argument_re, const pcrelocal_extra *extra_data, int what,
   void *where)
 {
 real_pcre internal_re;
-pcre_study_data internal_study;
+pcrelocal_study_data internal_study;
 const real_pcre *re = (const real_pcre *)argument_re;
-const pcre_study_data *study = NULL;
+const pcrelocal_study_data *study = NULL;
 
 if (re == NULL || where == NULL) return PCRE_ERROR_NULL;
 
 if (extra_data != NULL && (extra_data->flags & PCRE_EXTRA_STUDY_DATA) != 0)
-  study = (const pcre_study_data *)extra_data->study_data;
+  study = (const pcrelocal_study_data *)extra_data->study_data;
 
 if (re->magic_number != MAGIC_NUMBER)
   {
@@ -120,7 +120,7 @@ switch (what)
   case PCRE_INFO_FIRSTTABLE:
   *((const uschar **)where) =
     (study != NULL && (study->flags & PCRE_STUDY_MAPPED) != 0)?
-      ((const pcre_study_data *)extra_data->study_data)->start_bits : NULL;
+      ((const pcrelocal_study_data *)extra_data->study_data)->start_bits : NULL;
   break;
 
   case PCRE_INFO_MINLENGTH:
@@ -171,4 +171,4 @@ switch (what)
 return 0;
 }
 
-/* End of pcre_fullinfo.c */
+/* End of pcrelocal_fullinfo.c */

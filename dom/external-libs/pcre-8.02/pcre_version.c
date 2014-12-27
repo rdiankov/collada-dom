@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_version(), which returns a
+/* This module contains the external function pcrelocal_version(), which returns a
 string that identifies the PCRE version that is in use. */
 
 
@@ -80,11 +80,11 @@ pre-processor time. This hack uses a standard trick for avoiding calling
 the STRING macro with an empty argument when doing the test. */
 
 PCRE_EXP_DEFN const char * PCRE_CALL_CONVENTION
-pcre_version(void)
+pcrelocal_version(void)
 {
 return (XSTRING(Z PCRE_PRERELEASE)[1] == 0)?
   XSTRING(PCRE_MAJOR.PCRE_MINOR PCRE_DATE) :
   XSTRING(PCRE_MAJOR.PCRE_MINOR) XSTRING(PCRE_PRERELEASE PCRE_DATE);
 }
 
-/* End of pcre_version.c */
+/* End of pcrelocal_version.c */

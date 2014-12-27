@@ -87,13 +87,13 @@ input mode under Windows. */
 #endif
 
 
-/* We have to include pcre_internal.h because we need the internal info for
-displaying the results of pcre_study() and we also need to know about the
+/* We have to include pcrelocal_internal.h because we need the internal info for
+displaying the results of pcrelocal_study() and we also need to know about the
 internal macros, structures, and other internal data values; pcretest has
 "inside information" compared to a program that strictly follows the PCRE API.
 
-Although pcre_internal.h does itself include pcre.h, we explicitly include it
-here before pcre_internal.h so that the PCRE_EXP_xxx macros get set
+Although pcrelocal_internal.h does itself include pcre.h, we explicitly include it
+here before pcrelocal_internal.h so that the PCRE_EXP_xxx macros get set
 appropriately for an application, not for building PCRE. */
 
 #include "pcre.h"
@@ -116,9 +116,9 @@ external symbols to prevent clashes. */
 
 #include "pcre_tables.c"
 
-/* We also need the pcre_printint() function for printing out compiled
+/* We also need the pcrelocal_printint() function for printing out compiled
 patterns. This function is in a separate file so that it can be included in
-pcre_compile.c when that module is compiled with debugging enabled. It needs to
+pcrelocal_compile.c when that module is compiled with debugging enabled. It needs to
 know which case is being compiled. */
 
 #define COMPILING_PCRETEST
@@ -498,7 +498,7 @@ return yield;
 the match. Yield zero unless more callouts than the fail count, or the callout
 data is not zero. */
 
-static int callout(pcre_callout_block *cb)
+static int callout(pcrelocal_callout_block *cb)
 {
 FILE *f = (first_callout | callout_extra)? outfile : NULL;
 int i, pre_start, post_start, subject_length;
@@ -629,16 +629,16 @@ free(block);
 
 
 /*************************************************
-*          Call pcre_fullinfo()                  *
+*          Call pcrelocal_fullinfo()                  *
 *************************************************/
 
-/* Get one piece of information from the pcre_fullinfo() function */
+/* Get one piece of information from the pcrelocal_fullinfo() function */
 
-static void new_info(pcre *re, pcre_extra *study, int option, void *ptr)
+static void new_info(pcre *re, pcrelocal_extra *study, int option, void *ptr)
 {
 int rc;
-if ((rc = pcre_fullinfo(re, study, option, ptr)) < 0)
-  fprintf(outfile, "Error %d from pcre_fullinfo(%d)\n", rc, option);
+if ((rc = pcrelocal_fullinfo(re, study, option, ptr)) < 0)
+  fprintf(outfile, "Error %d from pcrelocal_fullinfo(%d)\n", rc, option);
 }
 
 
@@ -665,7 +665,7 @@ return ((value & 0x000000ff) << 24) |
 *************************************************/
 
 static int
-check_match_limit(pcre *re, pcre_extra *extra, uschar *bptr, int len,
+check_match_limit(pcre *re, pcrelocal_extra *extra, uschar *bptr, int len,
   int start_offset, int options, int *use_offsets, int use_size_offsets,
   int flag, unsigned long int *limit, int errnumber, const char *msg)
 {
@@ -680,7 +680,7 @@ for (;;)
   {
   *limit = mid;
 
-  count = pcre_exec(re, extra, (char *)bptr, len, start_offset, options,
+  count = pcrelocal_exec(re, extra, (char *)bptr, len, start_offset, options,
     use_offsets, use_size_offsets);
 
   if (count == errnumber)
@@ -935,7 +935,7 @@ while (argc > 1 && argv[op][0] == '-')
     {
     int rc;
     unsigned long int lrc;
-    printf("PCRE version %s\n", pcre_version());
+    printf("PCRE version %s\n", pcrelocal_version());
     printf("Compiled with\n");
     (void)pcre_config(PCRE_CONFIG_UTF8, &rc);
     printf("  %sUTF-8 support\n", rc? "" : "No ");
@@ -1018,21 +1018,21 @@ if (argc > 2)
 
 /* Set alternative malloc function */
 
-pcre_malloc = new_malloc;
-pcre_free = new_free;
-pcre_stack_malloc = stack_malloc;
-pcre_stack_free = stack_free;
+pcrelocal_malloc = new_malloc;
+pcrelocal_free = new_free;
+pcrelocal_stack_malloc = stack_malloc;
+pcrelocal_stack_free = stack_free;
 
 /* Heading line unless quiet, then prompt for first regex if stdin */
 
-if (!quiet) fprintf(outfile, "PCRE version %s\n\n", pcre_version());
+if (!quiet) fprintf(outfile, "PCRE version %s\n\n", pcrelocal_version());
 
 /* Main loop */
 
 while (!done)
   {
   pcre *re = NULL;
-  pcre_extra *extra = NULL;
+  pcrelocal_extra *extra = NULL;
 
 #if !defined NOPOSIX  /* There are still compilers that require no indent */
   regex_t preg;
@@ -1124,12 +1124,12 @@ while (!done)
 
     if (true_study_size != 0)
       {
-      pcre_study_data *psd;
+      pcrelocal_study_data *psd;
 
-      extra = (pcre_extra *)new_malloc(sizeof(pcre_extra) + true_study_size);
+      extra = (pcrelocal_extra *)new_malloc(sizeof(pcrelocal_extra) + true_study_size);
       extra->flags = PCRE_EXTRA_STUDY_DATA;
 
-      psd = (pcre_study_data *)(((char *)extra) + sizeof(pcre_extra));
+      psd = (pcrelocal_study_data *)(((char *)extra) + sizeof(pcrelocal_extra));
       extra->study_data = psd;
 
       if (fread(psd, 1, true_study_size, f) != true_study_size)
@@ -1252,7 +1252,7 @@ while (!done)
         goto SKIP_DATA;
         }
       locale_set = 1;
-      tables = pcre_maketables();
+      tables = pcrelocal_maketables();
       pp = ppp;
       break;
 
@@ -1336,7 +1336,7 @@ while (!done)
       clock_t start_time = clock();
       for (i = 0; i < timeit; i++)
         {
-        re = pcre_compile((char *)p, options, &error, &erroroffset, tables);
+        re = pcrelocal_compile((char *)p, options, &error, &erroroffset, tables);
         if (re != NULL) free(re);
         }
       time_taken = clock() - start_time;
@@ -1345,7 +1345,7 @@ while (!done)
           (double)CLOCKS_PER_SEC);
       }
 
-    re = pcre_compile((char *)p, options, &error, &erroroffset, tables);
+    re = pcrelocal_compile((char *)p, options, &error, &erroroffset, tables);
 
     /* Compilation failed; go back for another re, skipping to blank line
     if non-interactive. */
@@ -1406,18 +1406,18 @@ while (!done)
         clock_t time_taken;
         clock_t start_time = clock();
         for (i = 0; i < timeit; i++)
-          extra = pcre_study(re, study_options, &error);
+          extra = pcrelocal_study(re, study_options, &error);
         time_taken = clock() - start_time;
         if (extra != NULL) free(extra);
         fprintf(outfile, "  Study time %.4f milliseconds\n",
           (((double)time_taken * 1000.0) / (double)timeit) /
             (double)CLOCKS_PER_SEC);
         }
-      extra = pcre_study(re, study_options, &error);
+      extra = pcrelocal_study(re, study_options, &error);
       if (error != NULL)
         fprintf(outfile, "Failed to study: %s\n", error);
       else if (extra != NULL)
-        true_study_size = ((pcre_study_data *)(extra->study_data))->size;
+        true_study_size = ((pcrelocal_study_data *)(extra->study_data))->size;
       }
 
     /* If the 'F' option was present, we flip the bytes of all the integer
@@ -1432,25 +1432,25 @@ while (!done)
         byteflip(rre->magic_number, sizeof(rre->magic_number));
       rre->size = byteflip(rre->size, sizeof(rre->size));
       rre->options = byteflip(rre->options, sizeof(rre->options));
-      rre->flags = (pcre_uint16)byteflip(rre->flags, sizeof(rre->flags));
+      rre->flags = (pcrelocal_uint16)byteflip(rre->flags, sizeof(rre->flags));
       rre->top_bracket =
-        (pcre_uint16)byteflip(rre->top_bracket, sizeof(rre->top_bracket));
+        (pcrelocal_uint16)byteflip(rre->top_bracket, sizeof(rre->top_bracket));
       rre->top_backref =
-        (pcre_uint16)byteflip(rre->top_backref, sizeof(rre->top_backref));
+        (pcrelocal_uint16)byteflip(rre->top_backref, sizeof(rre->top_backref));
       rre->first_byte =
-        (pcre_uint16)byteflip(rre->first_byte, sizeof(rre->first_byte));
+        (pcrelocal_uint16)byteflip(rre->first_byte, sizeof(rre->first_byte));
       rre->req_byte =
-        (pcre_uint16)byteflip(rre->req_byte, sizeof(rre->req_byte));
-      rre->name_table_offset = (pcre_uint16)byteflip(rre->name_table_offset,
+        (pcrelocal_uint16)byteflip(rre->req_byte, sizeof(rre->req_byte));
+      rre->name_table_offset = (pcrelocal_uint16)byteflip(rre->name_table_offset,
         sizeof(rre->name_table_offset));
-      rre->name_entry_size = (pcre_uint16)byteflip(rre->name_entry_size,
+      rre->name_entry_size = (pcrelocal_uint16)byteflip(rre->name_entry_size,
         sizeof(rre->name_entry_size));
-      rre->name_count = (pcre_uint16)byteflip(rre->name_count,
+      rre->name_count = (pcrelocal_uint16)byteflip(rre->name_count,
         sizeof(rre->name_count));
 
       if (extra != NULL)
         {
-        pcre_study_data *rsd = (pcre_study_data *)(extra->study_data);
+        pcrelocal_study_data *rsd = (pcrelocal_study_data *)(extra->study_data);
         rsd->size = byteflip(rsd->size, sizeof(rsd->size));
         rsd->flags = byteflip(rsd->flags, sizeof(rsd->flags));
         rsd->minlength = byteflip(rsd->minlength, sizeof(rsd->minlength));
@@ -1464,7 +1464,7 @@ while (!done)
     if (do_debug)
       {
       fprintf(outfile, "------------------------------------------------------------------\n");
-      pcre_printint(re, outfile, debug_lengths);
+      pcrelocal_printint(re, outfile, debug_lengths);
       }
 
     /* We already have the options in get_options (see above) */
@@ -1493,27 +1493,27 @@ while (!done)
       new_info(re, NULL, PCRE_INFO_HASCRORLF, &hascrorlf);
 
 #if !defined NOINFOCHECK
-      old_count = pcre_info(re, &old_options, &old_first_char);
+      old_count = pcrelocal_info(re, &old_options, &old_first_char);
       if (count < 0) fprintf(outfile,
-        "Error %d from pcre_info()\n", count);
+        "Error %d from pcrelocal_info()\n", count);
       else
         {
         if (old_count != count) fprintf(outfile,
-          "Count disagreement: pcre_fullinfo=%d pcre_info=%d\n", count,
+          "Count disagreement: pcrelocal_fullinfo=%d pcrelocal_info=%d\n", count,
             old_count);
 
         if (old_first_char != first_char) fprintf(outfile,
-          "First char disagreement: pcre_fullinfo=%d pcre_info=%d\n",
+          "First char disagreement: pcrelocal_fullinfo=%d pcrelocal_info=%d\n",
             first_char, old_first_char);
 
         if (old_options != (int)get_options) fprintf(outfile,
-          "Options disagreement: pcre_fullinfo=%ld pcre_info=%d\n",
+          "Options disagreement: pcrelocal_fullinfo=%ld pcrelocal_info=%d\n",
             get_options, old_options);
         }
 #endif
 
       if (size != regex_gotten_store) fprintf(outfile,
-        "Size disagreement: pcre_fullinfo=%d call to malloc for %d\n",
+        "Size disagreement: pcrelocal_fullinfo=%d call to malloc for %d\n",
         (int)size, (int)regex_gotten_store);
 
       fprintf(outfile, "Capturing subpattern count = %d\n", count);
@@ -1752,7 +1752,7 @@ while (!done)
     copynamesptr = copynames;
     getnamesptr = getnames;
 
-    pcre_callout = callout;
+    pcrelocal_callout = callout;
     first_callout = 1;
     callout_extra = 0;
     callout_count = 0;
@@ -1892,7 +1892,7 @@ while (!done)
           while (isalnum(*p)) *npp++ = *p++;
           *npp++ = 0;
           *npp = 0;
-          n = pcre_get_stringnumber(re, (char *)copynamesptr);
+          n = pcrelocal_get_stringnumber(re, (char *)copynamesptr);
           if (n < 0)
             fprintf(outfile, "no parentheses with name \"%s\"\n", copynamesptr);
           copynamesptr = npp;
@@ -1904,7 +1904,7 @@ while (!done)
           }
         else if (*p == '-')
           {
-          pcre_callout = NULL;
+          pcrelocal_callout = NULL;
           p++;
           }
         else if (*p == '!')
@@ -1960,7 +1960,7 @@ while (!done)
           while (isalnum(*p)) *npp++ = *p++;
           *npp++ = 0;
           *npp = 0;
-          n = pcre_get_stringnumber(re, (char *)getnamesptr);
+          n = pcrelocal_get_stringnumber(re, (char *)getnamesptr);
           if (n < 0)
             fprintf(outfile, "no parentheses with name \"%s\"\n", getnamesptr);
           getnamesptr = npp;
@@ -2010,7 +2010,7 @@ while (!done)
         while(isdigit(*p)) n = n * 10 + *p++ - '0';
         if (extra == NULL)
           {
-          extra = (pcre_extra *)malloc(sizeof(pcre_extra));
+          extra = (pcrelocal_extra *)malloc(sizeof(pcrelocal_extra));
           extra->flags = 0;
           }
         extra->flags |= PCRE_EXTRA_MATCH_LIMIT_RECURSION;
@@ -2021,7 +2021,7 @@ while (!done)
         while(isdigit(*p)) n = n * 10 + *p++ - '0';
         if (extra == NULL)
           {
-          extra = (pcre_extra *)malloc(sizeof(pcre_extra));
+          extra = (pcrelocal_extra *)malloc(sizeof(pcrelocal_extra));
           extra->flags = 0;
           }
         extra->flags |= PCRE_EXTRA_MATCH_LIMIT;
@@ -2156,7 +2156,7 @@ while (!done)
           {
           int workspace[1000];
           for (i = 0; i < timeitm; i++)
-            count = pcre_dfa_exec(re, extra, (char *)bptr, len, start_offset,
+            count = pcrelocal_dfa_exec(re, extra, (char *)bptr, len, start_offset,
               options | g_notempty, use_offsets, use_size_offsets, workspace,
               sizeof(workspace)/sizeof(int));
           }
@@ -2164,7 +2164,7 @@ while (!done)
 #endif
 
         for (i = 0; i < timeitm; i++)
-          count = pcre_exec(re, extra, (char *)bptr, len,
+          count = pcrelocal_exec(re, extra, (char *)bptr, len,
             start_offset, options | g_notempty, use_offsets, use_size_offsets);
 
         time_taken = clock() - start_time;
@@ -2181,7 +2181,7 @@ while (!done)
         {
         if (extra == NULL)
           {
-          extra = (pcre_extra *)malloc(sizeof(pcre_extra));
+          extra = (pcrelocal_extra *)malloc(sizeof(pcrelocal_extra));
           extra->flags = 0;
           }
 
@@ -2202,12 +2202,12 @@ while (!done)
         {
         if (extra == NULL)
           {
-          extra = (pcre_extra *)malloc(sizeof(pcre_extra));
+          extra = (pcrelocal_extra *)malloc(sizeof(pcrelocal_extra));
           extra->flags = 0;
           }
         extra->flags |= PCRE_EXTRA_CALLOUT_DATA;
         extra->callout_data = &callout_data;
-        count = pcre_exec(re, extra, (char *)bptr, len, start_offset,
+        count = pcrelocal_exec(re, extra, (char *)bptr, len, start_offset,
           options | g_notempty, use_offsets, use_size_offsets);
         extra->flags &= ~PCRE_EXTRA_CALLOUT_DATA;
         }
@@ -2219,7 +2219,7 @@ while (!done)
       else if (all_use_dfa || use_dfa)
         {
         int workspace[1000];
-        count = pcre_dfa_exec(re, extra, (char *)bptr, len, start_offset,
+        count = pcrelocal_dfa_exec(re, extra, (char *)bptr, len, start_offset,
           options | g_notempty, use_offsets, use_size_offsets, workspace,
           sizeof(workspace)/sizeof(int));
         if (count == 0)
@@ -2232,7 +2232,7 @@ while (!done)
 
       else
         {
-        count = pcre_exec(re, extra, (char *)bptr, len,
+        count = pcrelocal_exec(re, extra, (char *)bptr, len,
           start_offset, options | g_notempty, use_offsets, use_size_offsets);
         if (count == 0)
           {
@@ -2295,7 +2295,7 @@ while (!done)
           if ((copystrings & (1 << i)) != 0)
             {
             char copybuffer[256];
-            int rc = pcre_copy_substring((char *)bptr, use_offsets, count,
+            int rc = pcrelocal_copy_substring((char *)bptr, use_offsets, count,
               i, copybuffer, sizeof(copybuffer));
             if (rc < 0)
               fprintf(outfile, "copy substring %d failed %d\n", i, rc);
@@ -2309,7 +2309,7 @@ while (!done)
              copynamesptr += (int)strlen((char*)copynamesptr) + 1)
           {
           char copybuffer[256];
-          int rc = pcre_copy_named_substring(re, (char *)bptr, use_offsets,
+          int rc = pcrelocal_copy_named_substring(re, (char *)bptr, use_offsets,
             count, (char *)copynamesptr, copybuffer, sizeof(copybuffer));
           if (rc < 0)
             fprintf(outfile, "copy substring %s failed %d\n", copynamesptr, rc);
@@ -2322,14 +2322,14 @@ while (!done)
           if ((getstrings & (1 << i)) != 0)
             {
             const char *substring;
-            int rc = pcre_get_substring((char *)bptr, use_offsets, count,
+            int rc = pcrelocal_get_substring((char *)bptr, use_offsets, count,
               i, &substring);
             if (rc < 0)
               fprintf(outfile, "get substring %d failed %d\n", i, rc);
             else
               {
               fprintf(outfile, "%2dG %s (%d)\n", i, substring, rc);
-              pcre_free_substring(substring);
+              pcrelocal_free_substring(substring);
               }
             }
           }
@@ -2339,21 +2339,21 @@ while (!done)
              getnamesptr += (int)strlen((char*)getnamesptr) + 1)
           {
           const char *substring;
-          int rc = pcre_get_named_substring(re, (char *)bptr, use_offsets,
+          int rc = pcrelocal_get_named_substring(re, (char *)bptr, use_offsets,
             count, (char *)getnamesptr, &substring);
           if (rc < 0)
             fprintf(outfile, "copy substring %s failed %d\n", getnamesptr, rc);
           else
             {
             fprintf(outfile, "  G %s (%d) %s\n", substring, rc, getnamesptr);
-            pcre_free_substring(substring);
+            pcrelocal_free_substring(substring);
             }
           }
 
         if (getlist)
           {
           const char **stringlist;
-          int rc = pcre_get_substring_list((char *)bptr, use_offsets, count,
+          int rc = pcrelocal_get_substring_list((char *)bptr, use_offsets, count,
             &stringlist);
           if (rc < 0)
             fprintf(outfile, "get substring list failed %d\n", rc);
@@ -2364,7 +2364,7 @@ while (!done)
             if (stringlist[i] != NULL)
               fprintf(outfile, "string list not terminated by NULL\n");
             /* free((void *)stringlist); */
-            pcre_free_substring_list(stringlist);
+            pcrelocal_free_substring_list(stringlist);
             }
           }
         }
@@ -2392,7 +2392,7 @@ while (!done)
       Complication arises in the case when the newline option is "any" or
       "anycrlf". If the previous match was at the end of a line terminated by
       CRLF, an advance of one character just passes the \r, whereas we should
-      prefer the longer newline sequence, as does the code in pcre_exec().
+      prefer the longer newline sequence, as does the code in pcrelocal_exec().
       Fudge the offset value to achieve this.
 
       Otherwise, in the case of UTF-8 matching, the advance must be one

@@ -41,7 +41,7 @@
 
 using std::vector;
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 Scanner::Scanner()
   : data_(),

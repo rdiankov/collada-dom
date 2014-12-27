@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_study(), along with local
+/* This module contains the external function pcrelocal_study(), along with local
 supporting functions. */
 
 
@@ -864,8 +864,8 @@ return yield;
 *************************************************/
 
 /* This function is handed a compiled expression that it must study to produce
-information that will speed up the matching. It returns a pcre_extra block
-which then gets handed back to pcre_exec().
+information that will speed up the matching. It returns a pcrelocal_extra block
+which then gets handed back to pcrelocal_exec().
 
 Arguments:
   re        points to the compiled expression
@@ -873,19 +873,19 @@ Arguments:
   errorptr  points to where to place error messages;
             set NULL unless error
 
-Returns:    pointer to a pcre_extra block, with study_data filled in and the
+Returns:    pointer to a pcrelocal_extra block, with study_data filled in and the
               appropriate flags set;
             NULL on error or if no optimization possible
 */
 
-PCRE_EXP_DEFN pcre_extra * PCRE_CALL_CONVENTION
-pcre_study(const pcre *external_re, int options, const char **errorptr)
+PCRE_EXP_DEFN pcrelocal_extra * PCRE_CALL_CONVENTION
+pcrelocal_study(const pcre *external_re, int options, const char **errorptr)
 {
 int min;
 BOOL bits_set = FALSE;
 uschar start_bits[32];
-pcre_extra *extra;
-pcre_study_data *study;
+pcrelocal_extra *extra;
+pcrelocal_study_data *study;
 const uschar *tables;
 uschar *code;
 compile_data compile_block;
@@ -943,15 +943,15 @@ min = find_minlength(code, code, re->options);
 
 if (!bits_set && min < 0) return NULL;
 
-/* Get a pcre_extra block and a pcre_study_data block. The study data is put in
+/* Get a pcrelocal_extra block and a pcrelocal_study_data block. The study data is put in
 the latter, which is pointed to by the former, which may also get additional
 data set later by the calling program. At the moment, the size of
-pcre_study_data is fixed. We nevertheless save it in a field for returning via
-the pcre_fullinfo() function so that if it becomes variable in the future, we
+pcrelocal_study_data is fixed. We nevertheless save it in a field for returning via
+the pcrelocal_fullinfo() function so that if it becomes variable in the future, we
 don't have to change that code. */
 
-extra = (pcre_extra *)(pcre_malloc)
-  (sizeof(pcre_extra) + sizeof(pcre_study_data));
+extra = (pcrelocal_extra *)(pcrelocal_malloc)
+  (sizeof(pcrelocal_extra) + sizeof(pcrelocal_study_data));
 
 if (extra == NULL)
   {
@@ -959,11 +959,11 @@ if (extra == NULL)
   return NULL;
   }
 
-study = (pcre_study_data *)((char *)extra + sizeof(pcre_extra));
+study = (pcrelocal_study_data *)((char *)extra + sizeof(pcrelocal_extra));
 extra->flags = PCRE_EXTRA_STUDY_DATA;
 extra->study_data = study;
 
-study->size = sizeof(pcre_study_data);
+study->size = sizeof(pcrelocal_study_data);
 study->flags = 0;
 
 if (bits_set)
@@ -981,4 +981,4 @@ if (min >= 0)
 return extra;
 }
 
-/* End of pcre_study.c */
+/* End of pcrelocal_study.c */

@@ -165,26 +165,26 @@ systems. Instead we make use of the maximum sizes that are available at
 preprocessor time in standard C environments. */
 
 #if USHRT_MAX == 65535
-  typedef unsigned short pcre_uint16;
-  typedef short pcre_int16;
+  typedef unsigned short pcrelocal_uint16;
+  typedef short pcrelocal_int16;
 #elif UINT_MAX == 65535
-  typedef unsigned int pcre_uint16;
-  typedef int pcre_int16;
+  typedef unsigned int pcrelocal_uint16;
+  typedef int pcrelocal_int16;
 #else
   #error Cannot determine a type for 16-bit unsigned integers
 #endif
 
 #if UINT_MAX == 4294967295
-  typedef unsigned int pcre_uint32;
-  typedef int pcre_int32;
+  typedef unsigned int pcrelocal_uint32;
+  typedef int pcrelocal_int32;
 #elif ULONG_MAX == 4294967295
-  typedef unsigned long int pcre_uint32;
-  typedef long int pcre_int32;
+  typedef unsigned long int pcrelocal_uint32;
+  typedef long int pcrelocal_int32;
 #else
   #error Cannot determine a type for 32-bit unsigned integers
 #endif
 
-/* When checking for integer overflow in pcre_compile(), we need to handle
+/* When checking for integer overflow in pcrelocal_compile(), we need to handle
 large integers. If a 64-bit integer type is available, we can use that.
 Otherwise we have to cast to double, which of course requires floating point
 arithmetic. Handle this by defining a macro for the appropriate type. If
@@ -258,10 +258,10 @@ start/end of string field names are. */
   )
 
 /* When PCRE is compiled as a C++ library, the subject pointer can be replaced
-with a custom type. This makes it possible, for example, to allow pcre_exec()
+with a custom type. This makes it possible, for example, to allow pcrelocal_exec()
 to process subject strings that are discontinuous by using a smart pointer
 class. It must always be possible to inspect all of the subject string in
-pcre_exec() because of the way it backtracks. Two macros are required in the
+pcrelocal_exec() because of the way it backtracks. Two macros are required in the
 normal case, for sign-unspecified and unsigned char pointers. The former is
 used for the external interface and appears in pcre.h, which is why its name
 must begin with PCRE_. */
@@ -306,7 +306,7 @@ neither (there some non-Unix environments where this is the case). */
 #define memmove(a, b, c) bcopy(b, a, c)
 #else  /* HAVE_BCOPY */
 static void *
-pcre_memmove(void *d, const void *s, size_t n)
+pcrelocal_memmove(void *d, const void *s, size_t n)
 {
 size_t i;
 unsigned char *dest = (unsigned char *)d;
@@ -324,7 +324,7 @@ else
   return (void *)(dest - n);
   }
 }
-#define memmove(a, b, c) pcre_memmove(a, b, c)
+#define memmove(a, b, c) pcrelocal_memmove(a, b, c)
 #endif   /* not HAVE_BCOPY */
 #endif   /* not HAVE_MEMMOVE */
 #endif   /* not VPCOMPAT */
@@ -564,7 +564,7 @@ compatibility. */
 #define PCRE_JCHANGED      0x0010  /* j option used in regex */
 #define PCRE_HASCRORLF     0x0020  /* explicit \r or \n in pattern */
 
-/* Options for the "extra" block produced by pcre_study(). */
+/* Options for the "extra" block produced by pcrelocal_study(). */
 
 #define PCRE_STUDY_MAPPED   0x01     /* a map of starting chars exists */
 #define PCRE_STUDY_MINLEN   0x02     /* a minimum length field exists */
@@ -1229,7 +1229,7 @@ OP_EOD must correspond in order to the list of escapes immediately above.
 
 *** NOTE NOTE NOTE *** Whenever this list is updated, the two macro definitions
 that follow must also be updated to match. There are also tables called
-"coptable" and "poptable" in pcre_dfa_exec.c that must be updated. */
+"coptable" and "poptable" in pcrelocal_dfa_exec.c that must be updated. */
 
 enum {
   OP_END,            /* 0 End of pattern */
@@ -1402,11 +1402,11 @@ enum {
 
 /* *** NOTE NOTE NOTE *** Whenever the list above is updated, the two macro
 definitions that follow must also be updated to match. There are also tables
-called "coptable" cna "poptable" in pcre_dfa_exec.c that must be updated. */
+called "coptable" cna "poptable" in pcrelocal_dfa_exec.c that must be updated. */
 
 
 /* This macro defines textual names for all the opcodes. These are used only
-for debugging. The macro is referenced only in pcre_printint.c. */
+for debugging. The macro is referenced only in pcrelocal_printint.c. */
 
 #define OP_NAME_LIST \
   "End", "\\A", "\\G", "\\K", "\\B", "\\b", "\\D", "\\d",         \
@@ -1532,33 +1532,33 @@ NOTE NOTE NOTE
 */
 
 typedef struct real_pcre {
-  pcre_uint32 magic_number;
-  pcre_uint32 size;               /* Total that was malloced */
-  pcre_uint32 options;            /* Public options */
-  pcre_uint16 flags;              /* Private flags */
-  pcre_uint16 dummy1;             /* For future use */
-  pcre_uint16 top_bracket;
-  pcre_uint16 top_backref;
-  pcre_uint16 first_byte;
-  pcre_uint16 req_byte;
-  pcre_uint16 name_table_offset;  /* Offset to name table that follows */
-  pcre_uint16 name_entry_size;    /* Size of any name items */
-  pcre_uint16 name_count;         /* Number of name items */
-  pcre_uint16 ref_count;          /* Reference count */
+  pcrelocal_uint32 magic_number;
+  pcrelocal_uint32 size;               /* Total that was malloced */
+  pcrelocal_uint32 options;            /* Public options */
+  pcrelocal_uint16 flags;              /* Private flags */
+  pcrelocal_uint16 dummy1;             /* For future use */
+  pcrelocal_uint16 top_bracket;
+  pcrelocal_uint16 top_backref;
+  pcrelocal_uint16 first_byte;
+  pcrelocal_uint16 req_byte;
+  pcrelocal_uint16 name_table_offset;  /* Offset to name table that follows */
+  pcrelocal_uint16 name_entry_size;    /* Size of any name items */
+  pcrelocal_uint16 name_count;         /* Number of name items */
+  pcrelocal_uint16 ref_count;          /* Reference count */
 
   const unsigned char *tables;    /* Pointer to tables or NULL for std */
   const unsigned char *nullpad;   /* NULL padding */
 } real_pcre;
 
-/* The format of the block used to store data from pcre_study(). The same
+/* The format of the block used to store data from pcrelocal_study(). The same
 remark (see NOTE above) about extending this structure applies. */
 
-typedef struct pcre_study_data {
-  pcre_uint32 size;               /* Total that was malloced */
-  pcre_uint32 flags;              /* Private flags */
+typedef struct pcrelocal_study_data {
+  pcrelocal_uint32 size;               /* Total that was malloced */
+  pcrelocal_uint32 flags;              /* Private flags */
   uschar start_bits[32];          /* Starting char bits */
-  pcre_uint32 minlength;          /* Minimum subject length */
-} pcre_study_data;
+  pcrelocal_uint32 minlength;          /* Minimum subject length */
+} pcrelocal_study_data;
 
 /* Structure for building a chain of open capturing subpatterns during
 compiling, so that instructions to close them can be compiled when (*ACCEPT) is
@@ -1567,8 +1567,8 @@ back references to themselves, so that they can be made atomic. */
 
 typedef struct open_capitem {
   struct open_capitem *next;    /* Chain link */
-  pcre_uint16 number;           /* Capture number */
-  pcre_uint16 flag;             /* Set TRUE if recursive back ref */
+  pcrelocal_uint16 number;           /* Capture number */
+  pcrelocal_uint16 flag;             /* Set TRUE if recursive back ref */
 } open_capitem;
 
 /* Structure for passing "static" information around between the functions
@@ -1694,7 +1694,7 @@ typedef struct dfa_match_data {
   void  *callout_data;          /* To pass back to callouts */
 } dfa_match_data;
 
-/* Bit definitions for entries in the pcre_ctypes table. */
+/* Bit definitions for entries in the pcrelocal_ctypes table. */
 
 #define ctype_space   0x01
 #define ctype_letter  0x02
@@ -1703,7 +1703,7 @@ typedef struct dfa_match_data {
 #define ctype_word    0x10   /* alphanumeric or '_' */
 #define ctype_meta    0x80   /* regexp meta char or zero (end pattern) */
 
-/* Offsets for the bitmap tables in pcre_cbits. Each table contains a set
+/* Offsets for the bitmap tables in pcrelocal_cbits. Each table contains a set
 of bits for a class map. Some classes are built by combining these tables. */
 
 #define cbit_space     0      /* [:space:] or \s */
@@ -1733,16 +1733,16 @@ relocations in shared libraries, it now has an offset into a single string
 instead. */
 
 typedef struct {
-  pcre_uint16 name_offset;
-  pcre_uint16 type;
-  pcre_uint16 value;
+  pcrelocal_uint16 name_offset;
+  pcrelocal_uint16 type;
+  pcrelocal_uint16 value;
 } ucp_type_table;
 
 
 /* Internal shared data tables. These are tables that are used by more than one
 of the exported public functions. They have to be "external" in the C sense,
 but are not part of the PCRE public API. The data for these tables is in the
-pcre_tables.c module. */
+pcrelocal_tables.c module. */
 
 extern const int    _pcre_utf8_table1[];
 extern const int    _pcre_utf8_table2[];
@@ -1768,7 +1768,7 @@ extern const uschar *_pcre_find_bracket(const uschar *, BOOL, int);
 extern BOOL          _pcre_is_newline(USPTR, int, USPTR, int *, BOOL);
 extern int           _pcre_ord2utf8(int, uschar *);
 extern real_pcre    *_pcre_try_flipped(const real_pcre *, real_pcre *,
-                       const pcre_study_data *, pcre_study_data *);
+                       const pcrelocal_study_data *, pcrelocal_study_data *);
 extern int           _pcre_valid_utf8(USPTR, int);
 extern BOOL          _pcre_was_newline(USPTR, int, USPTR, int *, BOOL);
 extern BOOL          _pcre_xclass(int, const uschar *);
@@ -1779,12 +1779,12 @@ extern BOOL          _pcre_xclass(int, const uschar *);
 typedef struct {
   uschar script;
   uschar chartype;
-  pcre_int32 other_case;
+  pcrelocal_int32 other_case;
 } ucd_record;
 
 extern const ucd_record  _pcre_ucd_records[];
 extern const uschar      _pcre_ucd_stage1[];
-extern const pcre_uint16 _pcre_ucd_stage2[];
+extern const pcrelocal_uint16 _pcre_ucd_stage2[];
 extern const int         _pcre_ucp_gentype[];
 
 
@@ -1802,4 +1802,4 @@ extern const int         _pcre_ucp_gentype[];
 
 #endif
 
-/* End of pcre_internal.h */
+/* End of pcrelocal_internal.h */

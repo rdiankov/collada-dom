@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_dfa_exec(), which is an
+/* This module contains the external function pcrelocal_dfa_exec(), which is an
 alternative matching function that uses a sort of DFA algorithm (not a true
 FSM). This is NOT Perl- compatible, but it has advantages in certain
 applications. */
@@ -2335,9 +2335,9 @@ for (;;)
         if (code[LINK_SIZE+1] == OP_CALLOUT)
           {
           rrc = 0;
-          if (pcre_callout != NULL)
+          if (pcrelocal_callout != NULL)
             {
-            pcre_callout_block cb;
+            pcrelocal_callout_block cb;
             cb.version          = 1;   /* Version 1 of the callout block */
             cb.callout_number   = code[LINK_SIZE+2];
             cb.offset_vector    = offsets;
@@ -2350,7 +2350,7 @@ for (;;)
             cb.capture_top      = 1;
             cb.capture_last     = -1;
             cb.callout_data     = md->callout_data;
-            if ((rrc = (*pcre_callout)(&cb)) < 0) return rrc;   /* Abandon */
+            if ((rrc = (*pcrelocal_callout)(&cb)) < 0) return rrc;   /* Abandon */
             }
           if (rrc > 0) break;                      /* Fail this thread */
           code += _pcre_OP_lengths[OP_CALLOUT];    /* Skip callout data */
@@ -2562,9 +2562,9 @@ for (;;)
 
       case OP_CALLOUT:
       rrc = 0;
-      if (pcre_callout != NULL)
+      if (pcrelocal_callout != NULL)
         {
-        pcre_callout_block cb;
+        pcrelocal_callout_block cb;
         cb.version          = 1;   /* Version 1 of the callout block */
         cb.callout_number   = code[1];
         cb.offset_vector    = offsets;
@@ -2577,7 +2577,7 @@ for (;;)
         cb.capture_top      = 1;
         cb.capture_last     = -1;
         cb.callout_data     = md->callout_data;
-        if ((rrc = (*pcre_callout)(&cb)) < 0) return rrc;   /* Abandon */
+        if ((rrc = (*pcrelocal_callout)(&cb)) < 0) return rrc;   /* Abandon */
         }
       if (rrc == 0)
         { ADD_ACTIVE(state_offset + _pcre_OP_lengths[OP_CALLOUT], 0); }
@@ -2678,7 +2678,7 @@ Returns:          > 0 => number of match offset pairs placed in offsets
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_dfa_exec(const pcre *argument_re, const pcre_extra *extra_data,
+pcrelocal_dfa_exec(const pcre *argument_re, const pcrelocal_extra *extra_data,
   const char *subject, int length, int start_offset, int options, int *offsets,
   int offsetcount, int *workspace, int wscount)
 {
@@ -2688,8 +2688,8 @@ dfa_match_data *md = &match_block;
 BOOL utf8, anchored, startline, firstline;
 const uschar *current_subject, *end_subject, *lcc;
 
-pcre_study_data internal_study;
-const pcre_study_data *study = NULL;
+pcrelocal_study_data internal_study;
+const pcrelocal_study_data *study = NULL;
 real_pcre internal_re;
 
 const uschar *req_byte_ptr;
@@ -2721,7 +2721,7 @@ if (extra_data != NULL)
   {
   unsigned int flags = extra_data->flags;
   if ((flags & PCRE_EXTRA_STUDY_DATA) != 0)
-    study = (const pcre_study_data *)extra_data->study_data;
+    study = (const pcrelocal_study_data *)extra_data->study_data;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT) != 0) return PCRE_ERROR_DFA_UMLIMIT;
   if ((flags & PCRE_EXTRA_MATCH_LIMIT_RECURSION) != 0)
     return PCRE_ERROR_DFA_UMLIMIT;
@@ -2783,7 +2783,7 @@ if ((md->moptions & (PCRE_BSR_ANYCRLF|PCRE_BSR_UNICODE)) == 0)
 /* Handle different types of newline. The three bits give eight cases. If
 nothing is set at run time, whatever was used at compile time applies. */
 
-switch ((((options & PCRE_NEWLINE_BITS) == 0)? re->options : (pcre_uint32)options) &
+switch ((((options & PCRE_NEWLINE_BITS) == 0)? re->options : (pcrelocal_uint32)options) &
          PCRE_NEWLINE_BITS)
   {
   case 0: newline = NEWLINE; break;   /* Compile-time default */
@@ -3005,7 +3005,7 @@ for (;;)
       bytes to avoid spending too much time in this optimization. */
 
       if (study != NULL && (study->flags & PCRE_STUDY_MINLEN) != 0 &&
-          (pcre_uint32)(end_subject - current_subject) < study->minlength)
+          (pcrelocal_uint32)(end_subject - current_subject) < study->minlength)
         return PCRE_ERROR_NOMATCH;
 
       /* If req_byte is set, we know that that character must appear in the
@@ -3113,4 +3113,4 @@ for (;;)
 return PCRE_ERROR_NOMATCH;
 }
 
-/* End of pcre_dfa_exec.c */
+/* End of pcrelocal_dfa_exec.c */

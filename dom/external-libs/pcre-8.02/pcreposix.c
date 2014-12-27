@@ -214,7 +214,7 @@ return length + addlength;
 PCREPOSIX_EXP_DEFN void PCRE_CALL_CONVENTION
 regfree(regex_t *preg)
 {
-(pcre_free)(preg->re_pcre);
+(pcrelocal_free)(preg->re_pcre);
 }
 
 
@@ -249,7 +249,7 @@ if ((cflags & REG_NOSUB) != 0)    options |= PCRE_NO_AUTO_CAPTURE;
 if ((cflags & REG_UTF8) != 0)     options |= PCRE_UTF8;
 if ((cflags & REG_UNGREEDY) != 0) options |= PCRE_UNGREEDY;
 
-preg->re_pcre = pcre_compile2(pattern, options, &errorcode, &errorptr,
+preg->re_pcre = pcrelocal_compile2(pattern, options, &errorcode, &errorptr,
   &erroffset, NULL);
 preg->re_erroffset = erroffset;
 
@@ -262,7 +262,7 @@ if (preg->re_pcre == NULL)
     eint[errorcode] : REG_BADPAT;
   }
 
-preg->re_nsub = pcre_info((const pcre *)preg->re_pcre, NULL, NULL);
+preg->re_nsub = pcrelocal_info((const pcre *)preg->re_pcre, NULL, NULL);
 return 0;
 }
 
@@ -339,7 +339,7 @@ else
   eo = strlen(string);
   }
 
-rc = pcre_exec((const pcre *)preg->re_pcre, NULL, string + so, (eo - so),
+rc = pcrelocal_exec((const pcre *)preg->re_pcre, NULL, string + so, (eo - so),
   0, options, ovector, nmatch * 3);
 
 if (rc == 0) rc = nmatch;    /* All captured slots were filled in */
