@@ -30,8 +30,8 @@ systems (e.g. Solaris) use the -R option.
 Building under Windows:
 
 If you want to statically link this program against a non-dll .a file, you must
-define PCRE_STATIC before including pcre.h, otherwise the pcre_malloc() and
-pcre_free() exported functions will be declared __declspec(dllimport), with
+define PCRE_STATIC before including pcre.h, otherwise the pcrelocal_malloc() and
+pcrelocal_free() exported functions will be declared __declspec(dllimport), with
 unwanted results. So in this environment, uncomment the following line. */
 
 /* #define PCRE_STATIC */
@@ -93,7 +93,7 @@ subject_length = (int)strlen(subject);
 * and errors that are detected.                                          *
 *************************************************************************/
 
-re = pcre_compile(
+re = pcrelocal_compile(
   pattern,              /* the pattern */
   0,                    /* default options */
   &error,               /* for error message */
@@ -115,7 +115,7 @@ if (re == NULL)
 * further matching is needed, it will be done below.                     *
 *************************************************************************/
 
-rc = pcre_exec(
+rc = pcrelocal_exec(
   re,                   /* the compiled pattern */
   NULL,                 /* no extra data - we didn't study the pattern */
   subject,              /* the subject string */
@@ -137,7 +137,7 @@ if (rc < 0)
     */
     default: printf("Matching error %d\n", rc); break;
     }
-  pcre_free(re);     /* Release memory used for the compiled pattern */
+  pcrelocal_free(re);     /* Release memory used for the compiled pattern */
   return 1;
   }
 
@@ -232,7 +232,7 @@ if (namecount <= 0) printf("No named substrings\n"); else
 * the next match at the end of the previous one.                         *
 *                                                                        *
 * If the previous match WAS for an empty string, we can't do that, as it *
-* would lead to an infinite loop. Instead, a special call of pcre_exec() *
+* would lead to an infinite loop. Instead, a special call of pcrelocal_exec() *
 * is made with the PCRE_NOTEMPTY_ATSTART and PCRE_ANCHORED flags set.    *
 * The first of these tells PCRE that an empty string at the start of the *
 * subject is not a valid match; other possibilities must be tried. The   *
@@ -243,7 +243,7 @@ if (namecount <= 0) printf("No named substrings\n"); else
 
 if (!find_all)
   {
-  pcre_free(re);   /* Release the memory used for the compiled pattern */
+  pcrelocal_free(re);   /* Release the memory used for the compiled pattern */
   return 0;        /* Finish unless -g was given */
   }
 
@@ -266,7 +266,7 @@ for (;;)
 
   /* Run the next matching operation */
 
-  rc = pcre_exec(
+  rc = pcrelocal_exec(
     re,                   /* the compiled pattern */
     NULL,                 /* no extra data - we didn't study the pattern */
     subject,              /* the subject string */
@@ -296,7 +296,7 @@ for (;;)
   if (rc < 0)
     {
     printf("Matching error %d\n", rc);
-    pcre_free(re);    /* Release memory used for the compiled pattern */
+    pcrelocal_free(re);    /* Release memory used for the compiled pattern */
     return 1;
     }
 
@@ -337,7 +337,7 @@ for (;;)
   }      /* End of loop to find second and subsequent matches */
 
 printf("\n");
-pcre_free(re);       /* Release memory used for the compiled pattern */
+pcrelocal_free(re);       /* Release memory used for the compiled pattern */
 return 0;
 }
 

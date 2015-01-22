@@ -42,12 +42,12 @@
 #include <vector>
 #include "pcrecpp.h"
 
-using pcrecpp::StringPiece;
-using pcrecpp::RE;
-using pcrecpp::RE_Options;
-using pcrecpp::Hex;
-using pcrecpp::Octal;
-using pcrecpp::CRadix;
+using pcrecpp_local::StringPiece;
+using pcrecpp_local::RE;
+using pcrecpp_local::RE_Options;
+using pcrecpp_local::Hex;
+using pcrecpp_local::Octal;
+using pcrecpp_local::CRadix;
 
 static bool VERBOSE_TEST  = false;
 
@@ -534,16 +534,16 @@ static void TestQuoteMetaLatin1() {
 
 static void TestQuoteMetaUtf8() {
 #ifdef SUPPORT_UTF8
-  TestQuoteMeta("Pl\xc3\xa1\x63ido Domingo", pcrecpp::UTF8());
-  TestQuoteMeta("xyz", pcrecpp::UTF8());            // No fancy utf8
-  TestQuoteMeta("\xc2\xb0", pcrecpp::UTF8());       // 2-byte utf8 (degree symbol)
-  TestQuoteMeta("27\xc2\xb0 degrees", pcrecpp::UTF8());  // As a middle character
-  TestQuoteMeta("\xe2\x80\xb3", pcrecpp::UTF8());   // 3-byte utf8 (double prime)
-  TestQuoteMeta("\xf0\x9d\x85\x9f", pcrecpp::UTF8()); // 4-byte utf8 (music note)
+  TestQuoteMeta("Pl\xc3\xa1\x63ido Domingo", pcrecpp_local::UTF8());
+  TestQuoteMeta("xyz", pcrecpp_local::UTF8());            // No fancy utf8
+  TestQuoteMeta("\xc2\xb0", pcrecpp_local::UTF8());       // 2-byte utf8 (degree symbol)
+  TestQuoteMeta("27\xc2\xb0 degrees", pcrecpp_local::UTF8());  // As a middle character
+  TestQuoteMeta("\xe2\x80\xb3", pcrecpp_local::UTF8());   // 3-byte utf8 (double prime)
+  TestQuoteMeta("\xf0\x9d\x85\x9f", pcrecpp_local::UTF8()); // 4-byte utf8 (music note)
   TestQuoteMeta("27\xc2\xb0"); // Interpreted as Latin-1, but should still work
   NegativeTestQuoteMeta("27\xc2\xb0",               // 2-byte utf (degree symbol)
                         "27\\\xc2\\\xb0",
-                        pcrecpp::UTF8());
+                        pcrecpp_local::UTF8());
 #endif
 }
 
@@ -618,8 +618,8 @@ static void Test_CASELESS() {
   TestOneOption("CASELESS (class2)", "HELLO",    "hello", options2.set_caseless(true), false);
   TestOneOption("CASELESS (class)",  "^[A-Z]+$", "Hello", options, false);
 
-  TestOneOption("CASELESS (function)", "HELLO",    "hello", pcrecpp::CASELESS(), false);
-  TestOneOption("CASELESS (function)", "^[A-Z]+$", "Hello", pcrecpp::CASELESS(), false);
+  TestOneOption("CASELESS (function)", "HELLO",    "hello", pcrecpp_local::CASELESS(), false);
+  TestOneOption("CASELESS (function)", "^[A-Z]+$", "Hello", pcrecpp_local::CASELESS(), false);
   options.set_caseless(false);
   TestOneOption("no CASELESS", "HELLO",    "hello", options, false, false);
 }
@@ -632,7 +632,7 @@ static void Test_MULTILINE() {
   options.set_multiline(true);
   TestOneOption("MULTILINE (class)",    "^cruel$", str, options, false);
   TestOneOption("MULTILINE (class2)",   "^cruel$", str, options2.set_multiline(true), false);
-  TestOneOption("MULTILINE (function)", "^cruel$", str, pcrecpp::MULTILINE(), false);
+  TestOneOption("MULTILINE (function)", "^cruel$", str, pcrecpp_local::MULTILINE(), false);
   options.set_multiline(false);
   TestOneOption("no MULTILINE", "^cruel$", str, options, false, false);
 }
@@ -645,7 +645,7 @@ static void Test_DOTALL() {
   options.set_dotall(true);
   TestOneOption("DOTALL (class)",    "HELLO.*world", str, options, true);
   TestOneOption("DOTALL (class2)",   "HELLO.*world", str, options2.set_dotall(true), true);
-  TestOneOption("DOTALL (function)",    "HELLO.*world", str, pcrecpp::DOTALL(), true);
+  TestOneOption("DOTALL (function)",    "HELLO.*world", str, pcrecpp_local::DOTALL(), true);
   options.set_dotall(false);
   TestOneOption("no DOTALL", "HELLO.*world", str, options, true, false);
 }
@@ -688,13 +688,13 @@ static void Test_EXTENDED() {
                     options,
                     false);
 
-  TestOneOption("EXTENDED (function)",    "HELLO world", str, pcrecpp::EXTENDED(), false, false);
+  TestOneOption("EXTENDED (function)",    "HELLO world", str, pcrecpp_local::EXTENDED(), false, false);
   TestOneOption("EXTENDED (function)",
                     "^ HE L{2} O "
                     "\\s+        "
                     "\\w+ $      ",
                     str,
-                    pcrecpp::EXTENDED(),
+                    pcrecpp_local::EXTENDED(),
                     false);
 
   options.set_extended(false);
@@ -1197,7 +1197,7 @@ int main(int argc, char** argv) {
     // Both should match in either mode, bytes or UTF-8
     RE re_test1(".........");
     CHECK(re_test1.FullMatch(utf8_string));
-    RE re_test2("...", pcrecpp::UTF8());
+    RE re_test2("...", pcrecpp_local::UTF8());
     CHECK(re_test2.FullMatch(utf8_string));
 
     // Check that '.' matches one byte or UTF-8 character
@@ -1206,20 +1206,20 @@ int main(int argc, char** argv) {
     RE re_test3("(.)");
     CHECK(re_test3.PartialMatch(utf8_string, &ss));
     CHECK_EQ(ss, string("\xe6"));
-    RE re_test4("(.)", pcrecpp::UTF8());
+    RE re_test4("(.)", pcrecpp_local::UTF8());
     CHECK(re_test4.PartialMatch(utf8_string, &ss));
     CHECK_EQ(ss, string("\xe6\x97\xa5"));
 
     // Check that string matches itself in either mode
     RE re_test5(utf8_string);
     CHECK(re_test5.FullMatch(utf8_string));
-    RE re_test6(utf8_string, pcrecpp::UTF8());
+    RE re_test6(utf8_string, pcrecpp_local::UTF8());
     CHECK(re_test6.FullMatch(utf8_string));
 
     // Check that pattern matches string only in UTF8 mode
     RE re_test7(utf8_pattern);
     CHECK(!re_test7.FullMatch(utf8_string));
-    RE re_test8(utf8_pattern, pcrecpp::UTF8());
+    RE re_test8(utf8_pattern, pcrecpp_local::UTF8());
     CHECK(re_test8.FullMatch(utf8_string));
   }
 
@@ -1230,7 +1230,7 @@ int main(int argc, char** argv) {
     const char* pattern = "\\w+X";
     const string target = "a aX";
     RE match_sentence(pattern);
-    RE match_sentence_re(pattern, pcrecpp::UTF8());
+    RE match_sentence_re(pattern, pcrecpp_local::UTF8());
 
     CHECK(!match_sentence.FullMatch(target));
     CHECK(!match_sentence_re.FullMatch(target));
@@ -1240,7 +1240,7 @@ int main(int argc, char** argv) {
     const char* pattern = "(?U)\\w+X";
     const string target = "a aX";
     RE match_sentence(pattern);
-    RE match_sentence_re(pattern, pcrecpp::UTF8());
+    RE match_sentence_re(pattern, pcrecpp_local::UTF8());
 
     CHECK(!match_sentence.FullMatch(target));
     CHECK(!match_sentence_re.FullMatch(target));

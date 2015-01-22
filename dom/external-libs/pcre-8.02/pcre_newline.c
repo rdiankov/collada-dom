@@ -159,4 +159,4 @@ else switch(c)
   }
 }
 
-/* End of pcre_newline.c */
+/* End of pcrelocal_newline.c */

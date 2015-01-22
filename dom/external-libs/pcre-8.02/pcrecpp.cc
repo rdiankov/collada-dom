@@ -48,7 +48,7 @@
 #include "pcre_stringpiece.h"
 
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 // Maximum number of args we can set
 static const int kMaxArgs = 16;
@@ -70,7 +70,7 @@ Arg RE::no_arg((void*)NULL);
 # define ULP_AS_STRING_INTERNAL(x)   #x
 # define USER_LABEL_PREFIX_STR       ULP_AS_STRING(__USER_LABEL_PREFIX__)
 extern Arg no_arg
-  __attribute__((alias(USER_LABEL_PREFIX_STR "_ZN7pcrecpp2RE6no_argE")));
+  __attribute__((alias(USER_LABEL_PREFIX_STR "_ZN13pcrecpp_local2RE6no_argE")));
 #endif
 
 // If a regular expression has no error, its error_ field points here
@@ -97,8 +97,8 @@ void RE::Init(const string& pat, const RE_Options* options) {
 }
 
 void RE::Cleanup() {
-  if (re_full_ != NULL)         (*pcre_free)(re_full_);
-  if (re_partial_ != NULL)      (*pcre_free)(re_partial_);
+  if (re_full_ != NULL)         (*pcrelocal_free)(re_full_);
+  if (re_partial_ != NULL)      (*pcrelocal_free)(re_partial_);
   if (error_ != &empty_string)  delete error_;
 }
 
@@ -110,8 +110,8 @@ RE::~RE() {
 
 pcre* RE::Compile(Anchor anchor) {
   // First, convert RE_Options into pcre options
-  int pcre_options = 0;
-  pcre_options = options_.all_options();
+  int pcrelocal_options = 0;
+  pcrelocal_options = options_.all_options();
 
   // Special treatment for anchoring.  This is needed because at
   // runtime pcre only provides an option for anchoring at the
@@ -129,7 +129,7 @@ pcre* RE::Compile(Anchor anchor) {
   int eoffset;
   pcre* re;
   if (anchor != ANCHOR_BOTH) {
-    re = pcre_compile(pattern_.c_str(), pcre_options,
+    re = pcrelocal_compile(pattern_.c_str(), pcrelocal_options,
                       &compile_error, &eoffset, NULL);
   } else {
     // Tack a '\z' at the end of RE.  Parenthesize it first so that
@@ -137,7 +137,7 @@ pcre* RE::Compile(Anchor anchor) {
     string wrapped = "(?:";  // A non-counting grouping operator
     wrapped += pattern_;
     wrapped += ")\\z";
-    re = pcre_compile(wrapped.c_str(), pcre_options,
+    re = pcrelocal_compile(wrapped.c_str(), pcrelocal_options,
                       &compile_error, &eoffset, NULL);
   }
   if (re == NULL) {
@@ -349,18 +349,18 @@ bool RE::Replace(const StringPiece& rewrite,
 // Note that PCRE_NEWLINE_CRLF is defined to be P_N_CR | P_N_LF.
 // Modified by PH to add PCRE_NEWLINE_ANY and PCRE_NEWLINE_ANYCRLF.
 
-static int NewlineMode(int pcre_options) {
+static int NewlineMode(int pcrelocal_options) {
   // TODO: if we can make it threadsafe, cache this var
   int newline_mode = 0;
   /* if (newline_mode) return newline_mode; */  // do this once it's cached
-  if (pcre_options & (PCRE_NEWLINE_CRLF|PCRE_NEWLINE_CR|PCRE_NEWLINE_LF|
+  if (pcrelocal_options & (PCRE_NEWLINE_CRLF|PCRE_NEWLINE_CR|PCRE_NEWLINE_LF|
                       PCRE_NEWLINE_ANY|PCRE_NEWLINE_ANYCRLF)) {
-    newline_mode = (pcre_options &
+    newline_mode = (pcrelocal_options &
                     (PCRE_NEWLINE_CRLF|PCRE_NEWLINE_CR|PCRE_NEWLINE_LF|
                      PCRE_NEWLINE_ANY|PCRE_NEWLINE_ANYCRLF));
   } else {
     int newline;
-    pcre_config(PCRE_CONFIG_NEWLINE, &newline);
+    pcrelocal_config(PCRE_CONFIG_NEWLINE, &newline);
     if (newline == 10)
       newline_mode = PCRE_NEWLINE_LF;
     else if (newline == 13)
@@ -372,7 +372,7 @@ static int NewlineMode(int pcre_options) {
     else if (newline == -2)
       newline_mode = PCRE_NEWLINE_ANYCRLF;
     else
-      assert(NULL == "Unexpected return value from pcre_config(NEWLINE)");
+      assert(NULL == "Unexpected return value from pcrelocal_config(NEWLINE)");
   }
   return newline_mode;
 }
@@ -403,7 +403,7 @@ int RE::GlobalReplace(const StringPiece& rewrite,
       if (matches <= 0) {
         int matchend = start + 1;     // advance one character.
         // If the current char is CR and we're in CRLF mode, skip LF too.
-        // Note it's better to call pcre_fullinfo() than to examine
+        // Note it's better to call pcrelocal_fullinfo() than to examine
         // all_options(), since options_ could have changed bewteen
         // compile-time and now, but this is simpler and safe enough.
         // Modified by PH to add ANY and ANYCRLF.
@@ -512,7 +512,7 @@ int RE::TryMatch(const StringPiece& text,
     return 0;
   }
 
-  pcre_extra extra = { 0, 0, 0, 0, 0, 0 };
+  pcrelocal_extra extra = { 0, 0, 0, 0, 0, 0 };
   if (options_.match_limit() > 0) {
     extra.flags |= PCRE_EXTRA_MATCH_LIMIT;
     extra.match_limit = options_.match_limit();
@@ -528,7 +528,7 @@ int RE::TryMatch(const StringPiece& text,
   if (!empty_ok)
     options |= PCRE_NOTEMPTY;
 
-  int rc = pcre_exec(re,              // The regular expression object
+  int rc = pcrelocal_exec(re,              // The regular expression object
                      &extra,
                      (text.data() == NULL) ? "" : text.data(),
                      text.size(),
@@ -545,7 +545,7 @@ int RE::TryMatch(const StringPiece& text,
     //        re, pattern_.c_str());
     return 0;
   } else if (rc == 0) {
-    // pcre_exec() returns 0 as a special case when the number of
+    // pcrelocal_exec() returns 0 as a special case when the number of
     // capturing subpatterns exceeds the size of the vector.
     // When this happens, there is a match and the output vector
     // is filled, but we miss out on the positions of the extra subpatterns.
@@ -647,11 +647,11 @@ int RE::NumberOfCapturingGroups() const {
   if (re_partial_ == NULL) return -1;
 
   int result;
-  int pcre_retval = pcre_fullinfo(re_partial_,  // The regular expression object
+  int pcrelocal_retval = pcrelocal_fullinfo(re_partial_,  // The regular expression object
                                   NULL,         // We did not study the pattern
                                   PCRE_INFO_CAPTURECOUNT,
                                   &result);
-  assert(pcre_retval == 0);
+  assert(pcrelocal_retval == 0);
   return result;
 }
 

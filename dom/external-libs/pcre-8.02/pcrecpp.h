@@ -61,15 +61,15 @@
 // supplied pattern exactly.
 //
 // Example: successful match
-//    pcrecpp::RE re("h.*o");
+//    pcrecpp_local::RE re("h.*o");
 //    re.FullMatch("hello");
 //
 // Example: unsuccessful match (requires full match):
-//    pcrecpp::RE re("e");
+//    pcrecpp_local::RE re("e");
 //    !re.FullMatch("hello");
 //
 // Example: creating a temporary RE object:
-//    pcrecpp::RE("h.*o").FullMatch("hello");
+//    pcrecpp_local::RE("h.*o").FullMatch("hello");
 //
 // You can pass in a "const char*" or a "string" for "text".  The
 // examples below tend to use a const char*.
@@ -87,7 +87,7 @@
 // Example: extracts "ruby" into "s" and 1234 into "i"
 //    int i;
 //    string s;
-//    pcrecpp::RE re("(\\w+):(\\d+)");
+//    pcrecpp_local::RE re("(\\w+):(\\d+)");
 //    re.FullMatch("ruby:1234", &s, &i);
 //
 // Example: does not try to extract any extra sub-patterns
@@ -100,10 +100,10 @@
 //    !re.FullMatch("ruby:1234567891234", NULL, &i);
 //
 // Example: fails because there aren't enough sub-patterns:
-//    !pcrecpp::RE("\\w+:\\d+").FullMatch("ruby:1234", &s);
+//    !pcrecpp_local::RE("\\w+:\\d+").FullMatch("ruby:1234", &s);
 //
 // Example: fails because string cannot be stored in integer
-//    !pcrecpp::RE("(.*)").FullMatch("ruby", &i);
+//    !pcrecpp_local::RE("(.*)").FullMatch("ruby", &i);
 //
 // The provided pointer arguments can be pointers to any scalar numeric
 // type, or one of
@@ -116,14 +116,14 @@
 // string is assigned the empty string.  Therefore, the following will
 // return false (because the empty string is not a valid number):
 //    int number;
-//    pcrecpp::RE::FullMatch("abc", "[a-z]+(\\d+)?", &number);
+//    pcrecpp_local::RE::FullMatch("abc", "[a-z]+(\\d+)?", &number);
 //
 // -----------------------------------------------------------------------
 // DO_MATCH
 //
 // The matching interface supports at most 16 arguments per call.
 // If you need more, consider using the more general interface
-// pcrecpp::RE::DoMatch().  See pcrecpp.h for the signature for DoMatch.
+// pcrecpp_local::RE::DoMatch().  See pcrecpp.h for the signature for DoMatch.
 //
 // -----------------------------------------------------------------------
 // PARTIAL MATCHES
@@ -132,11 +132,11 @@
 // to match any substring of the text.
 //
 // Example: simple search for a string:
-//    pcrecpp::RE("ell").PartialMatch("hello");
+//    pcrecpp_local::RE("ell").PartialMatch("hello");
 //
 // Example: find first number in a string:
 //    int number;
-//    pcrecpp::RE re("(\\d+)");
+//    pcrecpp_local::RE re("(\\d+)");
 //    re.PartialMatch("x*100 + 20", &number);
 //    assert(number == 100);
 //
@@ -153,13 +153,13 @@
 // set may match up to three bytes of a multi-byte character.
 //
 // Example:
-//    pcrecpp::RE_Options options;
+//    pcrecpp_local::RE_Options options;
 //    options.set_utf8();
-//    pcrecpp::RE re(utf8_pattern, options);
+//    pcrecpp_local::RE re(utf8_pattern, options);
 //    re.FullMatch(utf8_string);
 //
 // Example: using the convenience function UTF8():
-//    pcrecpp::RE re(utf8_pattern, pcrecpp::UTF8());
+//    pcrecpp_local::RE re(utf8_pattern, pcrecpp_local::UTF8());
 //    re.FullMatch(utf8_string);
 //
 // NOTE: The UTF8 option is ignored if pcre was not configured with the
@@ -263,11 +263,11 @@
 //
 // Example: read lines of the form "var = value" from a string.
 //    string contents = ...;                 // Fill string somehow
-//    pcrecpp::StringPiece input(contents);  // Wrap in a StringPiece
+//    pcrecpp_local::StringPiece input(contents);  // Wrap in a StringPiece
 //
 //    string var;
 //    int value;
-//    pcrecpp::RE re("(\\w+) = (\\d+)\n");
+//    pcrecpp_local::RE re("(\\w+) = (\\d+)\n");
 //    while (re.Consume(&input, &var, &value)) {
 //      ...;
 //    }
@@ -278,7 +278,7 @@
 // The "FindAndConsume" operation is similar to "Consume" but does not
 // anchor your match at the beginning of the string.  For example, you
 // could extract all words from a string by repeatedly calling
-//     pcrecpp::RE("(\\w+)").FindAndConsume(&input, &word)
+//     pcrecpp_local::RE("(\\w+)").FindAndConsume(&input, &word)
 //
 // -----------------------------------------------------------------------
 // PARSING HEX/OCTAL/C-RADIX NUMBERS
@@ -292,10 +292,10 @@
 //
 // Example:
 //   int a, b, c, d;
-//   pcrecpp::RE re("(.*) (.*) (.*) (.*)");
+//   pcrecpp_local::RE re("(.*) (.*) (.*) (.*)");
 //   re.FullMatch("100 40 0100 0x40",
-//                pcrecpp::Octal(&a), pcrecpp::Hex(&b),
-//                pcrecpp::CRadix(&c), pcrecpp::CRadix(&d));
+//                pcrecpp_local::Octal(&a), pcrecpp_local::Hex(&b),
+//                pcrecpp_local::CRadix(&c), pcrecpp_local::CRadix(&d));
 // will leave 64 in a, b, c, and d.
 //
 // -----------------------------------------------------------------------
@@ -308,7 +308,7 @@
 // matching text.  E.g.,
 //
 //   string s = "yabba dabba doo";
-//   pcrecpp::RE("b+").Replace("d", &s);
+//   pcrecpp_local::RE("b+").Replace("d", &s);
 //
 // will leave "s" containing "yada dabba doo".  The result is true if
 // the pattern matches and a replacement occurs, or false otherwise.
@@ -318,7 +318,7 @@
 // Replacements are not subject to re-matching.  E.g.,
 //
 //   string s = "yabba dabba doo";
-//   pcrecpp::RE("b+").GlobalReplace("d", &s);
+//   pcrecpp_local::RE("b+").GlobalReplace("d", &s);
 //
 // will leave "s" containing "yada dada doo".  It returns the number
 // of replacements made.
@@ -337,7 +337,7 @@
 // anyway so folks who include pcrecpp.h don't have to.
 #include <pcre_stringpiece.h>
 
-namespace pcrecpp {
+namespace pcrecpp_local {
 
 #define PCRE_SET_OR_CLEAR(b, o) \
     if (b) all_options_ |= (o); else all_options_ &= ~(o); \

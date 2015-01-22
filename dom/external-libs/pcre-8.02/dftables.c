@@ -40,7 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* This is a freestanding support program to generate a file containing
 character tables for PCRE. The tables are built according to the current
-locale. Now that pcre_maketables is a function visible to the outside world, we
+locale. Now that pcrelocal_maketables is a function visible to the outside world, we
 make use of its code from here in order to be consistent. */
 
 #ifdef HAVE_CONFIG_H
@@ -54,7 +54,7 @@ make use of its code from here in order to be consistent. */
 
 #include "pcre_internal.h"
 
-#define DFTABLES          /* pcre_maketables.c notices this */
+#define DFTABLES          /* pcrelocal_maketables.c notices this */
 #include "pcre_maketables.c"
 
 
@@ -81,7 +81,7 @@ if (argc < i + 1)
   return 1;
   }
 
-tables = pcre_maketables();
+tables = pcrelocal_maketables();
 base_of_tables = tables;
 
 f = fopen(argv[i], "wb");
@@ -189,7 +189,7 @@ if (isprint(i-8)) fprintf(f, " %c -", i-8);
   else fprintf(f, "%3d-", i-8);
 if (isprint(i-1)) fprintf(f, " %c ", i-1);
   else fprintf(f, "%3d", i-1);
-fprintf(f, " */\n\n/* End of pcre_chartables.c */\n");
+fprintf(f, " */\n\n/* End of pcrelocal_chartables.c */\n");
 
 fclose(f);
 free((void *)base_of_tables);

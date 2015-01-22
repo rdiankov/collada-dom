@@ -141,8 +141,8 @@ void parsePath(const string& path,
     //dir = baseName = extension = "";
     //re.FullMatch(path, &dir, &baseName, &extension);
 
-    static pcrecpp::RE findDir("(.*/)?(.*)?");
-    static pcrecpp::RE findExt("([^.]*)?(\\..*)?");
+    static pcrecpp_local::RE findDir("(.*/)?(.*)?");
+    static pcrecpp_local::RE findExt("([^.]*)?(\\..*)?");
     string tmpFile;
     dir = baseName = extension = tmpFile = "";
     findDir.PartialMatch(path, &dir, &tmpFile);
@@ -748,7 +748,7 @@ bool cdom::parseUriRef(const string& uriRef,
                        string& fragment) {
     // This regular expression for parsing URI references comes from the URI spec:
     //   http://tools.ietf.org/html/rfc3986#appendix-B
-    static pcrecpp::RE re("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
+    static pcrecpp_local::RE re("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
     string s1, s3, s6, s8;
     if (re.FullMatch(uriRef, &s1, &scheme, &s3, &authority, &path, &s6, &query, &s8, &fragment))
         return true;

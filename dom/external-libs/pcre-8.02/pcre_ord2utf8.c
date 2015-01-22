@@ -84,4 +84,4 @@ return 0;
 #endif
 }
 
-/* End of pcre_ord2utf8.c */
+/* End of pcrelocal_ord2utf8.c */

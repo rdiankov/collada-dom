@@ -38,9 +38,9 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_info(), which gives some
+/* This module contains the external function pcrelocal_info(), which gives some
 information about a compiled pattern. However, use of this function is now
-deprecated, as it has been superseded by pcre_fullinfo(). */
+deprecated, as it has been superseded by pcrelocal_fullinfo(). */
 
 
 #ifdef HAVE_CONFIG_H
@@ -59,7 +59,7 @@ of the private structure, but its interface was too rigid. It remains for
 backwards compatibility. The public options are passed back in an int - though
 the re->options field has been expanded to a long int, all the public options
 at the low end of it, and so even on 16-bit systems this will still be OK.
-Therefore, I haven't changed the API for pcre_info().
+Therefore, I haven't changed the API for pcrelocal_info().
 
 Arguments:
   argument_re   points to compiled code
@@ -73,7 +73,7 @@ Returns:        number of capturing subpatterns
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_info(const pcre *argument_re, int *optptr, int *first_byte)
+pcrelocal_info(const pcre *argument_re, int *optptr, int *first_byte)
 {
 real_pcre internal_re;
 const real_pcre *re = (const real_pcre *)argument_re;
@@ -90,4 +90,4 @@ if (first_byte != NULL)
 return re->top_bracket;
 }
 
-/* End of pcre_info.c */
+/* End of pcrelocal_info.c */

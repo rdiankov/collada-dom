@@ -26,7 +26,7 @@
 
 using std::map;
 using std::make_pair;
-using pcrecpp::StringPiece;
+using pcrecpp_local::StringPiece;
 
 static void CheckSTLComparator() {
   string s1("foo");

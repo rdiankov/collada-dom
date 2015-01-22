@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_compile(), along with
+/* This module contains the external function pcrelocal_compile(), along with
 supporting internal functions that are not used by other modules. */
 
 
@@ -53,7 +53,7 @@ supporting internal functions that are not used by other modules. */
 #include "pcre_internal.h"
 
 
-/* When PCRE_DEBUG is defined, we need the pcre_printint() function, which is
+/* When PCRE_DEBUG is defined, we need the pcrelocal_printint() function, which is
 also used by pcretest. PCRE_DEBUG is not defined when building a production
 library. */
 
@@ -1571,7 +1571,7 @@ for (;;)
 /* This little function scans through a compiled pattern until it finds a
 capturing bracket with the given number, or, if the number is negative, an
 instance of OP_REVERSE for a lookbehind. The function is global in the C sense
-so that it can be called from pcre_study() when finding the minimum matching
+so that it can be called from pcrelocal_study() when finding the minimum matching
 length.
 
 Arguments:
@@ -6410,7 +6410,7 @@ compatibility. The new function is given a new name.
 Arguments:
   pattern       the regular expression
   options       various option bits
-  errorcodeptr  pointer to error code variable (pcre_compile2() only)
+  errorcodeptr  pointer to error code variable (pcrelocal_compile2() only)
                   can be NULL if you don't want a code value
   errorptr      pointer to pointer to error text
   erroroffset   ptr offset in pattern where error was detected
@@ -6421,15 +6421,15 @@ Returns:        pointer to compiled data block, or NULL on error,
 */
 
 PCRE_EXP_DEFN pcre * PCRE_CALL_CONVENTION
-pcre_compile(const char *pattern, int options, const char **errorptr,
+pcrelocal_compile(const char *pattern, int options, const char **errorptr,
   int *erroroffset, const unsigned char *tables)
 {
-return pcre_compile2(pattern, options, NULL, errorptr, erroroffset, tables);
+return pcrelocal_compile2(pattern, options, NULL, errorptr, erroroffset, tables);
 }
 
 
 PCRE_EXP_DEFN pcre * PCRE_CALL_CONVENTION
-pcre_compile2(const char *pattern, int options, int *errorcodeptr,
+pcrelocal_compile2(const char *pattern, int options, int *errorcodeptr,
   const char **errorptr, int *erroroffset, const unsigned char *tables)
 {
 real_pcre *re;
@@ -6661,7 +6661,7 @@ because nowadays we limit the maximum value of cd->names_found and
 cd->name_entry_size. */
 
 size = length + sizeof(real_pcre) + cd->names_found * (cd->name_entry_size + 3);
-re = (real_pcre *)(pcre_malloc)(size);
+re = (real_pcre *)(pcrelocal_malloc)(size);
 
 if (re == NULL)
   {
@@ -6800,7 +6800,7 @@ if (cd->check_lookbehind)
 
 if (errorcode != 0)
   {
-  (pcre_free)(re);
+  (pcrelocal_free)(re);
   PCRE_EARLY_ERROR_RETURN:
   *erroroffset = ptr - (const uschar *)pattern;
   PCRE_EARLY_ERROR_RETURN2:
@@ -6880,14 +6880,14 @@ if ((re->flags & PCRE_REQCHSET) != 0)
     else printf("Req char = \\x%02x%s\n", ch, caseless);
   }
 
-pcre_printint(re, stdout, TRUE);
+pcrelocal_printint(re, stdout, TRUE);
 
 /* This check is done here in the debugging case so that the code that
 was compiled can be seen. */
 
 if (code - codestart > length)
   {
-  (pcre_free)(re);
+  (pcrelocal_free)(re);
   *errorptr = find_error_text(ERR23);
   *erroroffset = ptr - (uschar *)pattern;
   if (errorcodeptr != NULL) *errorcodeptr = ERR23;
@@ -6898,4 +6898,4 @@ if (code - codestart > length)
 return (pcre *)re;
 }
 
-/* End of pcre_compile.c */
+/* End of pcrelocal_compile.c */

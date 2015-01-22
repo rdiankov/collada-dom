@@ -56,8 +56,8 @@
 } while (0)
 
 using std::vector;
-using pcrecpp::StringPiece;
-using pcrecpp::Scanner;
+using pcrecpp_local::StringPiece;
+using pcrecpp_local::Scanner;
 
 static void TestScanner() {
   const char input[] = "\n"

@@ -67,18 +67,18 @@ static void LocalPcreFree(void* aPtr)
   {
   free(aPtr);
   }
-PCRE_EXP_DATA_DEFN void *(*pcre_malloc)(size_t) = LocalPcreMalloc;
-PCRE_EXP_DATA_DEFN void  (*pcre_free)(void *) = LocalPcreFree;
-PCRE_EXP_DATA_DEFN void *(*pcre_stack_malloc)(size_t) = LocalPcreMalloc;
-PCRE_EXP_DATA_DEFN void  (*pcre_stack_free)(void *) = LocalPcreFree;
-PCRE_EXP_DATA_DEFN int   (*pcre_callout)(pcre_callout_block *) = NULL;
+PCRE_EXP_DATA_DEFN void *(*pcrelocal_malloc)(size_t) = LocalPcreMalloc;
+PCRE_EXP_DATA_DEFN void  (*pcrelocal_free)(void *) = LocalPcreFree;
+PCRE_EXP_DATA_DEFN void *(*pcrelocal_stack_malloc)(size_t) = LocalPcreMalloc;
+PCRE_EXP_DATA_DEFN void  (*pcrelocal_stack_free)(void *) = LocalPcreFree;
+PCRE_EXP_DATA_DEFN int   (*pcrelocal_callout)(pcrelocal_callout_block *) = NULL;
 
 #elif !defined VPCOMPAT
-PCRE_EXP_DATA_DEFN void *(*pcre_malloc)(size_t) = malloc;
-PCRE_EXP_DATA_DEFN void  (*pcre_free)(void *) = free;
-PCRE_EXP_DATA_DEFN void *(*pcre_stack_malloc)(size_t) = malloc;
-PCRE_EXP_DATA_DEFN void  (*pcre_stack_free)(void *) = free;
-PCRE_EXP_DATA_DEFN int   (*pcre_callout)(pcre_callout_block *) = NULL;
+PCRE_EXP_DATA_DEFN void *(*pcrelocal_malloc)(size_t) = malloc;
+PCRE_EXP_DATA_DEFN void  (*pcrelocal_free)(void *) = free;
+PCRE_EXP_DATA_DEFN void *(*pcrelocal_stack_malloc)(size_t) = malloc;
+PCRE_EXP_DATA_DEFN void  (*pcrelocal_stack_free)(void *) = free;
+PCRE_EXP_DATA_DEFN int   (*pcrelocal_callout)(pcrelocal_callout_block *) = NULL;
 #endif
 
-/* End of pcre_globals.c */
+/* End of pcrelocal_globals.c */

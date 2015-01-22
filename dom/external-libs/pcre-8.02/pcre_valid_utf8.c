@@ -162,4 +162,4 @@ for (p = string; length-- > 0; p++)
 return -1;
 }
 
-/* End of pcre_valid_utf8.c */
+/* End of pcrelocal_valid_utf8.c */

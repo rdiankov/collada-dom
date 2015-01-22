@@ -38,6 +38,6 @@
 #include "pcrecpp_internal.h"
 #include "pcre_stringpiece.h"
 
-std::ostream& operator<<(std::ostream& o, const pcrecpp::StringPiece& piece) {
+std::ostream& operator<<(std::ostream& o, const pcrecpp_local::StringPiece& piece) {
   return (o << piece.as_string());
 }

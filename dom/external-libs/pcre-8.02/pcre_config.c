@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-/* This module contains the external function pcre_config(). */
+/* This module contains the external function pcrelocal_config(). */
 
 
 #ifdef HAVE_CONFIG_H
@@ -63,7 +63,7 @@ Returns:           0 if data returned, negative on error
 */
 
 PCRE_EXP_DEFN int PCRE_CALL_CONVENTION
-pcre_config(int what, void *where)
+pcrelocal_config(int what, void *where)
 {
 switch (what)
   {
@@ -125,4 +125,4 @@ switch (what)
 return 0;
 }
 
-/* End of pcre_config.c */
+/* End of pcrelocal_config.c */

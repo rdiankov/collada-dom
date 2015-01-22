@@ -52,7 +52,7 @@ clashes with the library. */
 
 
 /* Table of sizes for the fixed-length opcodes. It's defined in a macro so that
-the definition is next to the definition of the opcodes in pcre_internal.h. */
+the definition is next to the definition of the opcodes in pcrelocal_internal.h. */
 
 const uschar _pcre_OP_lengths[] = { OP_LENGTHS };
 
@@ -100,7 +100,7 @@ const int _pcre_ucp_gentype[] = {
   ucp_Z, ucp_Z, ucp_Z                 /* Zl, Zp, Zs */
 };
 
-/* The pcre_utt[] table below translates Unicode property names into type and
+/* The pcrelocal_utt[] table below translates Unicode property names into type and
 code values. It is searched by binary chop, so must be in collating sequence of
 name. Originally, the table contained pointers to the name strings in the first
 field of each entry. However, that leads to a large number of relocations when
@@ -520,4 +520,4 @@ const int _pcre_utt_size = sizeof(_pcre_utt)/sizeof(ucp_type_table);
 
 #endif  /* SUPPORT_UTF8 */
 
-/* End of pcre_tables.c */
+/* End of pcrelocal_tables.c */
