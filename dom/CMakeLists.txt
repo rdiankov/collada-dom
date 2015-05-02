@@ -1,6 +1,6 @@
 set(COLLADA_INTERNAL_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${COLLADA_INTERNAL_INCLUDE})
-set(COLLADA_LIBS minizip ${libpcrecpp_LIBRARIES} ${ZLIB_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+set(COLLADA_LIBS minizip ${liburiparser_LIBRARIES} ${libpcrecpp_LIBRARIES} ${ZLIB_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 file(GLOB dae_files ${CMAKE_CURRENT_SOURCE_DIR}/src/dae/*.cpp)
 if( LIBXML2_FOUND )
@@ -13,7 +13,7 @@ file(GLOB stddatabase_files ${CMAKE_CURRENT_SOURCE_DIR}/src/modules/STLDatabase/
 file(GLOB stderrplugin_files ${CMAKE_CURRENT_SOURCE_DIR}/src/modules/stdErrPlugin/*.cpp)
 
 set(COLLADA_BASE_SOURCES ${dae_files} ${libxmlplugin_files} ${stddatabase_files} ${stderrplugin_files})
-set(COLLADA_COMPILE_FLAGS "${libpcrecpp_CFLAGS_OTHERS} ${EXTRA_COMPILE_FLAGS} ${Boost_CFLAGS}")
+set(COLLADA_COMPILE_FLAGS "${liburiparser_CFLAGS_OTHERS} ${libpcrecpp_CFLAGS_OTHERS} ${EXTRA_COMPILE_FLAGS} ${Boost_CFLAGS}")
 # create dynamic libraries
 set(COLLADA_COMPILE_FLAGS "${COLLADA_COMPILE_FLAGS} -DDOM_DYNAMIC -DDOM_EXPORT")
 
