@@ -1,6 +1,13 @@
 Collada DOM Change Log
 ----------------------
 
+2.4.4
+=====
+
+- add using liburiparser library for parsing URIs
+
+- daeIDResolverType::compare now compares with getID
+  
 2.4.3
 =====
 

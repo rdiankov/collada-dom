@@ -5,7 +5,7 @@ set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
 # Define here the needed parameters
 set (COLLADA_DOM_VERSION_MAJOR 2)
 set (COLLADA_DOM_VERSION_MINOR 4)
-set (COLLADA_DOM_VERSION_PATCH 3)
+set (COLLADA_DOM_VERSION_PATCH 4)
 set (COLLADA_DOM_VERSION ${COLLADA_DOM_VERSION_MAJOR}.${COLLADA_DOM_VERSION_MINOR}.${COLLADA_DOM_VERSION_PATCH})
 set (COLLADA_DOM_SOVERSION ${COLLADA_DOM_VERSION_MAJOR}.${COLLADA_DOM_VERSION_MINOR})
 
@@ -227,7 +227,7 @@ else()
   set(MINIZIP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dom/external-libs/minizip-1.1 ${ZLIB_INCLUDE_DIR})
 endif()
 
-pkg_check_modules(liburiparser liburiparser REQUIRED)
+pkg_check_modules(liburiparser liburiparser)
 
 if(liburiparser_FOUND)
   set(liburiparser_CFLAGS_OTHERS "-DUSE_URIPARSER")
