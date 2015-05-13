@@ -12,8 +12,7 @@
 # COLLADA_DOM_LIBRARY_DIRS - link directories
 # COLLADA_DOM_LIBRARIES - libraries to link plugins with
 # COLLADA_DOM_Boost_VERSION - the boost version collada-dom was compiled with
-set(_PREFIX @CMAKE_INSTALL_PREFIX@)
-set(COLLADA_DOM_ROOT_DIR "${_PREFIX}")
+set(COLLADA_DOM_ROOT_DIR "@CMAKE_INSTALL_PREFIX@")
 
 if( MSVC )
   # in order to prevent DLL hell, each of the DLLs have to be suffixed with the major version and msvc prefix
