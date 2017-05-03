@@ -140,6 +140,9 @@ public:
     virtual bool write(const std::string& path);
     // Write a document to the path specified in the second parameter, returning false on failure.
     virtual bool writeTo(const std::string& docPath, const std::string& pathToWriteTo);
+    // Write a document to memory, returning false on failure.
+    virtual bool writeToMemory(const std::string& docPath, std::vector<char>& output);
+    
     // Writes all documents, returning false if any document failed to write.
     virtual bool writeAll();
     // Close a specific document, unloading all memory used by the document. Returns false on failure.

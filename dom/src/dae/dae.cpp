@@ -203,6 +203,16 @@ bool DAE::writeTo(const string& docPath, const string& pathToWriteTo) {
     return writeCommon(docPath, pathToWriteTo, true);
 }
 
+bool DAE::writeToMemory(const string& docPath, std::vector<char>& output)
+{
+    string docUri = makeFullUri(docPath);
+    plugin->setDatabase(database);
+    if (daeDocument* doc = getDoc(docUri)) {
+        return plugin->writeToMemory(output, doc) == DAE_OK;
+    }
+    return false;
+}
+
 bool DAE::writeAll() {
     for (int i = 0; i < getDocCount(); i++)
         if (save((daeUInt)i, true) != DAE_OK)

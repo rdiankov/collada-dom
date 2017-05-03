@@ -79,6 +79,15 @@ public:
 	* @see @c DAE::saveAs()
 	*/
 	virtual daeInt write(const daeURI& name, daeDocument *document, daeBool replace) = 0;
+
+	//@{
+	/**
+	* Writes a specific document to a memory buffer.
+	* @param document Pointer to the document that we're going to write out.
+	* @return Returns DAE_OK if success, a negative value defined in daeError.h otherwise.
+	* @see @c DAE::saveAs()
+	*/
+    virtual daeInt writeToMemory(std::vector<char>& output, daeDocument *document) = 0;
 	//@}
 	
 	/**
@@ -120,6 +129,7 @@ public:
 	virtual void setDatabase(daeDatabase* database) { }
 	virtual daeInt read(const daeURI& uri, daeString docBuffer) { return DAE_ERROR; }
 	virtual daeInt write(const daeURI& name, daeDocument *document, daeBool replace) { return DAE_ERROR; }
+    virtual daeInt writeToMemory(std::vector<char>& output, daeDocument *document) { return DAE_ERROR; }
 	virtual daeInt setOption( daeString option, daeString value ) { return DAE_ERROR; }
 	virtual daeString getOption( daeString option ) { return ""; }
 };

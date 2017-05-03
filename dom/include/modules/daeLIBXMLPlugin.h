@@ -42,6 +42,8 @@ public:
 	// Operations
 	virtual daeInt write(const daeURI& name, daeDocument *document, daeBool replace);
 
+    virtual daeInt writeToMemory(std::vector<char>& output, daeDocument *document);
+
 	/**
 	 * setOption allows you to set options for this IOPlugin. Which options a plugin supports is
 	 * dependent on the plugin itself. There is currently no list of options that plugins are

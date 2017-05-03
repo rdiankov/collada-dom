@@ -541,6 +541,63 @@ daeInt daeLIBXMLPlugin::write(const daeURI& name, daeDocument *document, daeBool
     return DAE_OK;
 }
 
+daeInt daeLIBXMLPlugin::writeToMemory(std::vector<char>& output, daeDocument *document)
+{
+    // Make sure database and document are both set
+    if (!database) {
+        return DAE_ERR_INVALID_CALL;
+    }
+    if(!document) {
+        return DAE_ERR_COLLECTION_DOES_NOT_EXIST;
+    }
+
+    int err=0;
+    xmlBufferHandler bufhandler;
+
+    // taken from http://xmlsoft.org/examples/testWriter.c
+    // Create a new XML buffer, to which the XML document will be written
+    bufhandler.buf = xmlBufferCreate();
+    if (!bufhandler.buf) {
+        ostringstream msg;
+        msg << "daeLIBXMLPlugin::writeToMemory() testXmlwriterMemory: Error creating the xml buffer\n";
+        daeErrorHandler::get()->handleError(msg.str().c_str());
+        return DAE_ERR_BACKEND_IO;
+    }
+
+    // Create a new XmlWriter for memory, with no compression. Remark: there is no compression for this kind of xmlTextWriter
+    writer = xmlNewTextWriterMemory(bufhandler.buf, 0);
+    if (!writer) {
+        ostringstream msg;
+        msg << "daeLIBXMLPlugin::writeToMemory() Error creating the xml writer\n";
+        daeErrorHandler::get()->handleError(msg.str().c_str());
+        return DAE_ERR_BACKEND_IO;
+    }
+    err = xmlTextWriterSetIndentString( writer, (const xmlChar*)"\t" ); // Don't change this to spaces
+    if( err < 0 ) {
+    }
+    err = xmlTextWriterSetIndent( writer, 1 ); // Turns indentation on
+    if( err < 0 ) {
+    }
+    err = xmlTextWriterStartDocument( writer, "1.0", "UTF-8", NULL );
+    if( err < 0 ) {
+    }
+
+    writeElement( document->getDomRoot() );
+
+    xmlTextWriterEndDocument( writer );
+    xmlTextWriterFlush( writer );
+    xmlFreeTextWriter( writer );
+    writer = NULL; // reset pointer
+
+    if( bufhandler.buf->use == 0 ) {
+        return DAE_ERR_BACKEND_IO;
+    }
+
+    output.resize(bufhandler.buf->use);
+    memcpy(&output[0], bufhandler.buf->content, bufhandler.buf->use);
+    return DAE_OK;
+}
+
 void daeLIBXMLPlugin::writeElement( daeElement* element )
 {
     daeMetaElement* _meta = element->getMeta();
