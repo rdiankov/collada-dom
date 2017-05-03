@@ -1,7 +1,7 @@
 Collada DOM Change Log
 ----------------------
 
-2.4.5
+2.5.0
 =====
 
 - add new method writeToMemory that saves XML to std::vector<char> instead of file.
