@@ -237,10 +237,10 @@ else()
   set(MINIZIP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dom/external-libs/minizip-1.1 ${ZLIB_INCLUDE_DIR})
 endif()
 
-pkg_check_modules(liburiparser liburiparser)
-
-if(liburiparser_FOUND)
-  set(liburiparser_CFLAGS_OTHERS "-DUSE_URIPARSER")
+find_package(uriparser)
+if(uriparser_FOUND)
+  message(STATUS "uriparser found")
+  set(uriparser_CFLAGS_OTHERS "-DUSE_URIPARSER")
 else()
   # try using pcrecpp
   pkg_check_modules(libpcrecpp libpcrecpp)
