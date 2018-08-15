@@ -14,7 +14,6 @@
 #include <dae/daeElement.h>
 #include <dae/daeUtils.h>
 #include <curl/curl.h>
-#include <vector>
 class DAE;
 
 /**
