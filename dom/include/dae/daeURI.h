@@ -13,6 +13,8 @@
 #include <dae/daeTypes.h>
 #include <dae/daeElement.h>
 #include <dae/daeUtils.h>
+#include <curl/curl.h>
+#include <vector>
 class DAE;
 
 /**
@@ -486,6 +488,8 @@ namespace cdom {
 	DLLSPEC std::string uriToNativePath(const std::string& uriRef,
 	                                    systemType type = getSystemType());
 
+	DLLSPEC std::string quote(const std::string& uri);  // quote a given uri 
+	DLLSPEC std::string unquote(const std::string& uri);  // unquote a given uri
 	DLLSPEC std::string filePathToUri(const std::string& filePath); // Alias for nativePathToUri
 	DLLSPEC std::string uriToFilePath(const std::string& uriRef); // Alias for uriToNativePath
 }

@@ -887,9 +887,59 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
     }
 
     // Convert spaces to %20
-    uri = replace(uri, " ", "%20");
-
+    //uri = replace(uri, " ", "%20");
+    uri = unquote(uri);  // TODO: need to find where the uri is double quoted.
+    uri = quote(uri);
     return uri;
+}
+
+string cdom::quote(const string& uri){
+    CURL *curl = curl_easy_init();
+    string scheme, authority, path, query, fragment;
+    parseUriRef(uri, scheme, authority, path, query, fragment);
+    if(curl){
+        string quotepath = "";
+        if(!scheme.empty()){
+            path = uri.substr(scheme.length() + 1 + authority.length());
+        }
+        else{
+            path = uri;
+        }
+        size_t i = 0;
+        size_t pos = path.find('/');
+        while(pos != path.npos){
+            string subpath = path.substr(i, pos - i);
+            char* output = curl_easy_escape(curl, subpath.c_str(), subpath.length());
+            if(output){
+                quotepath = quotepath + string(output) + "/";
+            }
+            i = ++pos;
+            pos = path.find('/', pos+1);
+        }
+        char* output = curl_easy_escape(curl, path.substr(i).c_str(), path.substr(i).length());
+        if(output){
+            quotepath = quotepath + string(output);
+        }
+	    string result = assembleUri(scheme, authority, quotepath, "", "", false);
+        return result;
+	}
+	daeErrorHandler::get()->handleError("daeURI::uriEncode - Encode URI failed\n");
+	return string();
+}
+
+std::string cdom::unquote(const std::string& uri){
+	CURL *curl = curl_easy_init();
+	if(curl){
+		int* outlength = NULL;
+		char* output = curl_easy_unescape(curl, uri.c_str(), uri.length(), outlength);
+		if(output){
+			return string(output);
+		}
+	}
+	daeErrorHandler::get()->handleError("daeURI::uriDecode - Decode URI failed ");
+	daeErrorHandler::get()->handleError(uri.c_str());
+
+	return string();
 }
 
 string cdom::filePathToUri(const string& filePath) {
@@ -927,8 +977,8 @@ string cdom::uriToNativePath(const string& uriRef, systemType type) {
     filePath += path;
 
     // Replace %20 with space
-    filePath = replace(filePath, "%20", " ");
-
+    //filePath = replace(filePath, "%20", " ");
+    filePath = unquote(filePath);
     return filePath;
 }
 
