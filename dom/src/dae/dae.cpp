@@ -175,7 +175,7 @@ domCOLLADAProxy* DAE::openCommon(const string& path, daeString buffer) {
     plugin->setDatabase(database);
     if (plugin->read(daeURI(*this, uri.c_str()), buffer) != DAE_OK)
         return NULL;
-    return getRoot(uri);
+    return getRoot(path);
 }
 
 domCOLLADAProxy* DAE::open(const string& path) {

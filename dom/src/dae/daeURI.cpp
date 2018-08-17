@@ -803,7 +803,10 @@ bool cdom::parseUriRef(const string& uriRef,
     static pcrecpp::RE re("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
     string s1, s3, s6, s8;
     if (re.FullMatch(uriRef, &s1, &scheme, &s3, &authority, &path, &s6, &query, &s8, &fragment))
+    {   
+        path  = unquote(path);
         return true;
+    }
 #endif
 
     return false;
@@ -854,7 +857,7 @@ string cdom::assembleUri(const string& scheme,
             uri += "/";
         }
     }
-    uri += path;
+    uri += quote(path);
 
     if (!query.empty())
         uri += "?" + query;
@@ -876,7 +879,7 @@ string cdom::fixUriForLibxml(const string& uriRef) {
 
 
 string cdom::nativePathToUri(const string& nativePath, systemType type) {
-    string uri = nativePath;
+    string uri = quote(nativePath);
 
     if (type == Windows) {
         // Convert "c:\" to "/c:/"
@@ -885,26 +888,13 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
         // Convert backslashes to forward slashes
         uri = replace(uri, "\\", "/");
     }
-
-    // Convert spaces to %20
-    //uri = replace(uri, " ", "%20");
-    uri = unquote(uri);  // TODO: need to find where the uri is double quoted.
-    uri = quote(uri);
     return uri;
 }
 
-string cdom::quote(const string& uri){
+string cdom::quote(const string& path){
     CURL *curl = curl_easy_init();
-    string scheme, authority, path, query, fragment;
-    parseUriRef(uri, scheme, authority, path, query, fragment);
     if(curl){
         string quotepath = "";
-        if(!scheme.empty()){
-            path = uri.substr(scheme.length() + 1 + authority.length());
-        }
-        else{
-            path = uri;
-        }
         size_t i = 0;
         size_t pos = path.find('/');
         while(pos != path.npos){
@@ -920,9 +910,8 @@ string cdom::quote(const string& uri){
         if(output){
             quotepath = quotepath + string(output);
         }
-	    string result = assembleUri(scheme, authority, quotepath, "", "", false);
-        return result;
-	}
+        return quotepath;
+    }
 	daeErrorHandler::get()->handleError("daeURI::uriEncode - Encode URI failed\n");
 	return string();
 }
@@ -978,7 +967,7 @@ string cdom::uriToNativePath(const string& uriRef, systemType type) {
 
     // Replace %20 with space
     //filePath = replace(filePath, "%20", " ");
-    filePath = unquote(filePath);
+    //filePath = unquote(filePath);
     return filePath;
 }
 
