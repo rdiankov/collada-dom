@@ -902,6 +902,7 @@ string cdom::quote(const string& path){
             char* output = curl_easy_escape(curl, subpath.c_str(), subpath.length());
             if(output){
                 quotepath = quotepath + string(output) + "/";
+                curl_free(output);
             }
             i = ++pos;
             pos = path.find('/', pos+1);
@@ -922,7 +923,9 @@ std::string cdom::unquote(const std::string& uri){
 		int* outlength = NULL;
 		char* output = curl_easy_unescape(curl, uri.c_str(), uri.length(), outlength);
 		if(output){
-			return string(output);
+            string result = string(output);
+            curl_free(output);
+            return result;
 		}
 	}
 	daeErrorHandler::get()->handleError("daeURI::uriDecode - Decode URI failed ");
