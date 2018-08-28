@@ -879,8 +879,12 @@ string cdom::fixUriForLibxml(const string& uriRef) {
 
 
 string cdom::nativePathToUri(const string& nativePath, systemType type) {
+    string scheme, authority, path, query, fragment = "";
+    parseUriRef(nativePath, scheme, authority, path, query, fragment);
+    if(scheme != ""){
+        return nativePath; 
+    }
     string uri = quote(nativePath);
-
     if (type == Windows) {
         // Convert "c:\" to "/c:/"
         if (uri.length() >= 2  &&  isalpha(uri[0])  &&  uri[1] == ':')
@@ -969,8 +973,7 @@ string cdom::uriToNativePath(const string& uriRef, systemType type) {
     filePath += path;
 
     // Replace %20 with space
-    //filePath = replace(filePath, "%20", " ");
-    //filePath = unquote(filePath);
+    filePath = replace(filePath, "%20", " ");
     return filePath;
 }
 

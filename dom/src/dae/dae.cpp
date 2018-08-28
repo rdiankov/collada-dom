@@ -188,7 +188,7 @@ domCOLLADAProxy* DAE::openFromMemory(const string& path, daeString buffer) {
 
 bool DAE::writeCommon(const string& docPath, const string& pathToWriteTo, bool replace) {
     string docUri = makeFullUri(docPath),
-           uriToWriteTo = makeFullUri(pathToWriteTo);
+    uriToWriteTo = makeFullUri(pathToWriteTo);
     plugin->setDatabase(database);
     if (daeDocument* doc = getDoc(docUri))
         return plugin->write(daeURI(*this, uriToWriteTo.c_str()), doc, replace) == DAE_OK;
