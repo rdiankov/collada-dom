@@ -882,9 +882,10 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
     string scheme, authority, path, query, fragment = "";
     parseUriRef(nativePath, scheme, authority, path, query, fragment);
     if(scheme != ""){
+        // already a uri format.
         return nativePath; 
     }
-    string uri = quote(nativePath);
+    string uri = "file:" + quote(nativePath);
     if (type == Windows) {
         // Convert "c:\" to "/c:/"
         if (uri.length() >= 2  &&  isalpha(uri[0])  &&  uri[1] == ':')
