@@ -52,11 +52,9 @@ public: // INTERFACE
 private: // MEMBERS
 	size_t _stringBufferSize;
 	size_t _stringBufferIndex;
-	size_t _listIndex;
 	std::vector<std::vector<char>> _stringBuffersList;
 
-	// Returns a buffer of _stringBufferSize bytes. Allocates new buffer if needed
-	daeString getNewBuffer();
+	daeString allocateBuffer();
 
 	daeString _empty;
 };

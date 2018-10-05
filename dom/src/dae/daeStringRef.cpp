@@ -26,8 +26,7 @@ daeStringTable &daeStringRef::_stringTable()
 void daeStringRef::releaseStringTable(void)
 {
   if(pST) {
-    delete pST;
-    pST = NULL;
+    pST->clear();
   }
 }
 //--------------------------------

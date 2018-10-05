@@ -10,20 +10,16 @@
 
 daeStringTable::daeStringTable(int stringBufferSize):_stringBufferSize(stringBufferSize), _empty( "" )
 {
-	_stringBufferIndex = 0;
-	_listIndex = -1;
-	getNewBuffer();
+	_stringBufferIndex = _stringBufferSize;
+	//allocate initial buffer
+	//allocateBuffer();
 }
 
-daeString daeStringTable::getNewBuffer()
+daeString daeStringTable::allocateBuffer()
 {
+	_stringBuffersList.emplace_back(_stringBufferSize);
 	_stringBufferIndex = 0;
-	_listIndex++;
-	if (_listIndex + 1 >= _stringBuffersList.size()) {
-		_stringBuffersList.emplace_back(_stringBufferSize);
-	}
-
-	return _stringBuffersList[_listIndex].data();
+	return _stringBuffersList.back().data();
 }
 
 daeString daeStringTable::allocString(daeString string)
@@ -36,11 +32,11 @@ daeString daeStringTable::allocString(daeString string)
 	{
 		if (stringSize > _stringBufferSize)
 			_stringBufferSize = ((stringSize / _stringBufferSize) + 1) * _stringBufferSize ;
-		buf = getNewBuffer();
+		buf = allocateBuffer();
 	}
 	else
 	{
-		buf = _stringBuffersList[_listIndex].data();
+		buf = _stringBuffersList.back().data();
 	}
 	daeChar *str = (char*)buf + _stringBufferIndex;
 	memcpy(str,string,stringSize);
@@ -54,7 +50,6 @@ daeString daeStringTable::allocString(daeString string)
 
 void daeStringTable::clear()
 {
-	// Reuse the allocated memory
-	_stringBufferIndex = 0;
-	_listIndex = 0;
+	_stringBuffersList.clear();
+	_stringBufferIndex = _stringBufferSize;
 }
