@@ -11,6 +11,9 @@
 #include <dae/daeTypes.h>
 #include <dae/daeMemorySystem.h>
 
+#include <vector>
+#include <string>
+
 /**
  * The @c daeStringTable is a simple string table class to hold a float list of strings
  * without a lot of allocations.
@@ -49,9 +52,11 @@ public: // INTERFACE
 private: // MEMBERS
 	size_t _stringBufferSize;
 	size_t _stringBufferIndex;
-	daeStringArray _stringBuffersList;
+	size_t _listIndex;
+	std::vector<std::vector<char>> _stringBuffersList;
 
-	daeString allocateBuffer();
+	// Returns a buffer of _stringBufferSize bytes. Allocates new buffer if needed
+	daeString getNewBuffer();
 
 	daeString _empty;
 };
