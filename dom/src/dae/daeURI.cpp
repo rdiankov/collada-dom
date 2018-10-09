@@ -896,6 +896,27 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
     return uri;
 }
 
+string easy_escape(CURL* curl, std::string& path){
+    char* output = curl_easy_escape(curl, path.c_str(), path.length());
+    std::string ans = "";
+    if(output){
+        string ans = std::string(output);
+        curl_free(output);
+    }
+    return ans;
+}
+
+string easy_unescape(CURL* curl, std::string& path){
+    int outlength;
+    char* output = curl_easy_unescape(curl, path.c_str(), path.length(), &outlength);
+    std::string ans = "";
+    if(output){
+        string ans = std::string(output);
+        curl_free(output);
+    }
+    return ans;
+}
+
 string cdom::quote(const string& path){
     CURL *curl = curl_easy_init();
     if(curl){
@@ -904,39 +925,37 @@ string cdom::quote(const string& path){
         size_t pos = path.find('/');
         while(pos != path.npos){
             string subpath = path.substr(i, pos - i);
-            char* output = curl_easy_escape(curl, subpath.c_str(), subpath.length());
-            if(output){
-                quotepath = quotepath + string(output) + "/";
-                curl_free(output);
+            string output = easy_escape(curl, subpath);
+            if(!output.empty()){
+                quotepath = quotepath + output + "/";
             }
             i = ++pos;
             pos = path.find('/', pos+1);
         }
-        char* output = curl_easy_escape(curl, path.substr(i).c_str(), path.substr(i).length());
-        if(output){
+        string subpath = path.substr(i);
+        string output = easy_escape(curl, subpath);
+        if(!output.empty()){
             quotepath = quotepath + string(output);
         }
         return quotepath;
     }
-	daeErrorHandler::get()->handleError("daeURI::uriEncode - Encode URI failed\n");
+    daeErrorHandler::get()->handleError("daeURI::uriEncode - Encode URI failed\n");
+    daeErrorHandler::get()->handleError(path.c_str());
 	return string();
 }
 
 std::string cdom::unquote(const std::string& uri){
-	CURL *curl = curl_easy_init();
-	if(curl){
-		int* outlength = NULL;
-		char* output = curl_easy_unescape(curl, uri.c_str(), uri.length(), outlength);
-		if(output){
-            string result = string(output);
-            curl_free(output);
-            return result;
-		}
-	}
-	daeErrorHandler::get()->handleError("daeURI::uriDecode - Decode URI failed ");
-	daeErrorHandler::get()->handleError(uri.c_str());
-
-	return string();
+    CURL *curl = curl_easy_init();
+    if(curl){
+        string s(uri);
+        string output = easy_unescape(curl, s);
+        if(!output.empty()){
+            return output;
+        }
+    }
+    daeErrorHandler::get()->handleError("daeURI::uriDecode - Decode URI failed ");
+    daeErrorHandler::get()->handleError(uri.c_str());
+    return string();
 }
 
 string cdom::filePathToUri(const string& filePath) {

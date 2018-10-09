@@ -487,6 +487,8 @@ namespace cdom {
 	DLLSPEC std::string uriToNativePath(const std::string& uriRef,
 	                                    systemType type = getSystemType());
 
+	DLLSPEC std::string easy_escape(CURL* curl, std::string& path);   // wrapper for curl_easy_escape
+	DLLSPEC std::string easy_unescape(CURL* curl, std::string& path);  // wrapper for curl_easy_unescape
 	DLLSPEC std::string quote(const std::string& path);   // quote a given path
 	DLLSPEC std::string unquote(const std::string& uri);  // unquote a given uri
 	DLLSPEC std::string filePathToUri(const std::string& filePath); // Alias for nativePathToUri
