@@ -896,7 +896,7 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
     return uri;
 }
 
-string easy_escape(CURL* curl, std::string& path){
+string cdom::easy_escape(CURL* curl, std::string& path){
     char* output = curl_easy_escape(curl, path.c_str(), path.length());
     std::string ans = "";
     if(output){
@@ -906,7 +906,7 @@ string easy_escape(CURL* curl, std::string& path){
     return ans;
 }
 
-string easy_unescape(CURL* curl, std::string& path){
+string cdom::easy_unescape(CURL* curl, std::string& path){
     int outlength;
     char* output = curl_easy_unescape(curl, path.c_str(), path.length(), &outlength);
     std::string ans = "";
