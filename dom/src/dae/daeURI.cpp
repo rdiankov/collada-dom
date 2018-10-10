@@ -900,7 +900,7 @@ string cdom::easy_escape(CURL* curl, std::string& path){
     char* output = curl_easy_escape(curl, path.c_str(), path.length());
     std::string ans = "";
     if(output){
-        string ans = std::string(output);
+        ans = std::string(output);
         curl_free(output);
     }
     return ans;
@@ -911,7 +911,7 @@ string cdom::easy_unescape(CURL* curl, std::string& path){
     char* output = curl_easy_unescape(curl, path.c_str(), path.length(), &outlength);
     std::string ans = "";
     if(output){
-        string ans = std::string(output);
+        ans = std::string(output);
         curl_free(output);
     }
     return ans;
@@ -923,6 +923,9 @@ string cdom::quote(const string& path){
         string quotepath = "";
         size_t i = 0;
         size_t pos = path.find('/');
+        if(path.substr(0, 1) == "/"){
+            quotepath = "/";
+        }
         while(pos != path.npos){
             string subpath = path.substr(i, pos - i);
             string output = easy_escape(curl, subpath);
