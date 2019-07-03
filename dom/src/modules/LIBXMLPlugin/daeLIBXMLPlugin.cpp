@@ -165,7 +165,9 @@ daeLIBXMLPlugin::~daeLIBXMLPlugin()
         xmlFreeTextWriter( writer );
         writer = NULL;
     }
-    xmlCleanupParser();
+    // according to libxml2 source, xmlCleanupParser can only be called when the application
+    // has no other usage of libxml2, which we cannot guarantee here, so it is unsafe to call
+    // xmlCleanupParser();
 }
 
 daeInt daeLIBXMLPlugin::setOption( daeString option, daeString value )
