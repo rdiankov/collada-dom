@@ -1,6 +1,11 @@
 Collada DOM Change Log
 ----------------------
 
+2.5.1
+=====
+
+- remove unsafe xmlCleanupParser call
+  
 2.5.0
 =====
 
