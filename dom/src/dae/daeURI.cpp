@@ -803,7 +803,10 @@ bool cdom::parseUriRef(const string& uriRef,
     static pcrecpp::RE re("^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?");
     string s1, s3, s6, s8;
     if (re.FullMatch(uriRef, &s1, &scheme, &s3, &authority, &path, &s6, &query, &s8, &fragment))
+    {   
+        path  = unquote(path);
         return true;
+    }
 #endif
 
     return false;
@@ -854,7 +857,7 @@ string cdom::assembleUri(const string& scheme,
             uri += "/";
         }
     }
-    uri += path;
+    uri += quote(path);
 
     if (!query.empty())
         uri += "?" + query;
@@ -876,8 +879,13 @@ string cdom::fixUriForLibxml(const string& uriRef) {
 
 
 string cdom::nativePathToUri(const string& nativePath, systemType type) {
-    string uri = nativePath;
-
+    string scheme, authority, path, query, fragment = "";
+    parseUriRef(nativePath, scheme, authority, path, query, fragment);
+    if(scheme != ""){
+        // already a uri format.
+        return nativePath; 
+    }
+    string uri = "file:" + quote(nativePath);
     if (type == Windows) {
         // Convert "c:\" to "/c:/"
         if (uri.length() >= 2  &&  isalpha(uri[0])  &&  uri[1] == ':')
@@ -885,11 +893,72 @@ string cdom::nativePathToUri(const string& nativePath, systemType type) {
         // Convert backslashes to forward slashes
         uri = replace(uri, "\\", "/");
     }
-
-    // Convert spaces to %20
-    uri = replace(uri, " ", "%20");
-
     return uri;
+}
+
+string cdom::easy_escape(CURL* curl, std::string& path){
+    char* output = curl_easy_escape(curl, path.c_str(), path.length());
+    std::string ans = "";
+    if(output){
+        ans = std::string(output);
+        curl_free(output);
+    }
+    return ans;
+}
+
+string cdom::easy_unescape(CURL* curl, std::string& path){
+    int outlength;
+    char* output = curl_easy_unescape(curl, path.c_str(), path.length(), &outlength);
+    std::string ans = "";
+    if(output){
+        ans = std::string(output);
+        curl_free(output);
+    }
+    return ans;
+}
+
+string cdom::quote(const string& path){
+    CURL *curl = curl_easy_init();
+    if(curl){
+        string quotepath = "";
+        size_t i = 0;
+        size_t pos = path.find('/');
+        if(path.substr(0, 1) == "/"){
+            quotepath = "/";
+        }
+        while(pos != path.npos){
+            string subpath = path.substr(i, pos - i);
+            string output = easy_escape(curl, subpath);
+            if(!output.empty()){
+                quotepath = quotepath + output + "/";
+            }
+            i = ++pos;
+            pos = path.find('/', pos+1);
+        }
+        string subpath = path.substr(i);
+        string output = easy_escape(curl, subpath);
+        if(!output.empty()){
+            quotepath = quotepath + string(output);
+        }
+        return quotepath;
+    }
+    daeErrorHandler::get()->handleError("daeURI::uriEncode - Encode URI failed\n");
+    daeErrorHandler::get()->handleError(path.c_str());
+	return string();
+}
+
+std::string cdom::unquote(const std::string& uri){
+    CURL *curl = curl_easy_init();
+    if(curl){
+        string s(uri);
+        string output = easy_unescape(curl, s);
+        if(!output.empty()){
+            return output;
+        }
+    }
+    daeErrorHandler::get()->handleError("daeURI::uriDecode - Decode URI failed ");
+    daeErrorHandler::get()->handleError(uri.c_str());
+    return string();
 }
 
 string cdom::filePathToUri(const string& filePath) {
@@ -928,7 +997,6 @@ string cdom::uriToNativePath(const string& uriRef, systemType type) {
 
     // Replace %20 with space
     filePath = replace(filePath, "%20", " ");
-
     return filePath;
 }
 

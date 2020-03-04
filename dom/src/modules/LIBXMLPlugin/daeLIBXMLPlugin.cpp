@@ -223,7 +223,8 @@ void libxmlErrorHandler(void* arg,
 // A simple structure to help alloc/free xmlTextReader objects
 struct xmlTextReaderHelper {
     xmlTextReaderHelper(const daeURI& uri) {
-        if((reader = xmlReaderForFile(cdom::fixUriForLibxml(uri.str()).c_str(), NULL, XML_PARSE_HUGE)))
+        const string filename = cdom::uriToFilePath(cdom::fixUriForLibxml(uri.str()));
+        if((reader = xmlReaderForFile(filename.c_str(), NULL, XML_PARSE_HUGE)))
             xmlTextReaderSetErrorHandler(reader, libxmlErrorHandler, NULL);
     }
 

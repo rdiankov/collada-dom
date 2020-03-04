@@ -199,6 +199,20 @@ if( NOT ZLIB_FOUND )
   set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dom/external-libs/zlib-1.2.5)
 endif()
 
+
+find_package(CURL)
+if( NOT CURL_FOUND )
+  if( MSVC )
+    message(STATUS "setting local curl library from msvc_binaries/${MUJINCLIENT_TARGET_PROCESSOR}/${MSVC_PREFIX}")
+    set(CURL_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/msvc_binaries/${MUJINCLIENT_TARGET_PROCESSOR}/${MSVC_PREFIX}/include")
+    set(CURL_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/msvc_binaries/${MUJINCLIENT_TARGET_PROCESSOR}/${MSVC_PREFIX}/lib/libcurl-${MSVC_PREFIX}-mt_imp.lib")
+  else()
+    message(FATAL_ERROR "could not find CURL library")
+  endif()
+else()
+  link_libraries(curl)
+endif()
+
 find_package(LibXml2)
 if( LIBXML2_FOUND )
   include_directories(${LIBXML2_INCLUDE_DIR})
@@ -318,7 +332,7 @@ if(CMAKE_CPACK_COMMAND AND UNIX AND OPT_BUILD_PACKAGES)
   set(CPACK_COMPONENT_${COMPONENT_PREFIX_UPPER}-DEV_DISPLAY_NAME "C++ headers and build tools")
   set(CPACK_COMPONENT_${COMPONENT_PREFIX_UPPER}-DEV_DEPENDS ${COMPONENT_PREFIX}-base)
   
-  set(CPACK_DEBIAN_BUILD_DEPENDS debhelper cmake libxml2-dev libboost-dev zlib1g-dev libboost-filesystem-dev libboost-system-dev libpcre3-dev pkg-config libtinyxml-dev liburiparser-dev CACHE STRING "Build dependency packages")
+  set(CPACK_DEBIAN_BUILD_DEPENDS debhelper libcurl cmake libxml2-dev libboost-dev zlib1g-dev libboost-filesystem-dev libboost-system-dev libpcre3-dev pkg-config libtinyxml-dev liburiparser-dev CACHE STRING "Build dependency packages")
 
   # debian
   set(CPACK_DEBIAN_PACKAGE_PRIORITY optional)
