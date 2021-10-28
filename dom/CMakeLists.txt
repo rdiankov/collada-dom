@@ -29,6 +29,7 @@ if( OPT_COLLADA14 )
 endif()
 
 add_library(collada-dom SHARED ${COLLADA_BASE_SOURCES})
+target_include_directories(collada-dom PUBLIC ${COLLADA_INTERNAL_INCLUDE})
 target_link_libraries(collada-dom ${COLLADA_LIBS})
 set_target_properties(collada-dom PROPERTIES
   COMPILE_FLAGS "${COLLADA_COMPILE_FLAGS}"
