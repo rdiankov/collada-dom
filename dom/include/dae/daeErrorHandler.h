@@ -55,7 +55,7 @@ public:
 
 private:
 	static daeErrorHandler *_instance;
-	static std::auto_ptr<daeErrorHandler> _defaultInstance;
+	static std::unique_ptr<daeErrorHandler> _defaultInstance;
 };
 
 #endif

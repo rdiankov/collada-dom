@@ -371,7 +371,7 @@ DefineTest(tinyXmlLoad) {
     // saved document, and make sure the results are the same.
     DAE dae;
     CheckResult(dae.open(seymourOrig));
-    auto_ptr<daeTinyXMLPlugin> tinyXmlPlugin(new daeTinyXMLPlugin);
+    unique_ptr<daeTinyXMLPlugin> tinyXmlPlugin(new daeTinyXMLPlugin);
     dae.setIOPlugin(tinyXmlPlugin.get());
     CheckResult(dae.writeTo(seymourOrig, seymourTinyXml));
     CheckResult(dae.open(seymourTinyXml));

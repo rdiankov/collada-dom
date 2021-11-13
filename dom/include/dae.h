@@ -290,7 +290,7 @@ private:
     daeSidRefCache sidRefCache;
     daeString COLLADA_VERSION, COLLADA_NAMESPACE; // dynamic
 
-    std::auto_ptr<charEncoding> localCharEncoding;
+    std::unique_ptr<charEncoding> localCharEncoding;
     static charEncoding globalCharEncoding;
 };
 
